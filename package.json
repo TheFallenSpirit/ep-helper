@@ -1,0 +1,33 @@
+{
+	"name": "ep-helper",
+	"license": "MIT",
+	"version": "1.0",
+	"type": "module",
+	"main": "src/app.ts",
+	"packageManager": "pnpm@10.26.1",
+	"author": "Liam L (thefallenspirit@outlook.com)",
+	"description": "A small helper bot for the Eternal Paradise Discord server.",
+	"engines": {
+		"node": ">=22"
+	},
+	"prettier": {
+		"tabWidth": 4,
+		"printWidth": 140,
+		"singleQuote": true,
+		"trailingComma": "none"
+	},
+	"scripts": {
+		"build": "rm -r build; tsc",
+		"start": "node -r dotenv/config build/src/app.js",
+		"dev": "pnpm run build && clear && pnpm run start --dev"
+	},
+	"dependencies": {
+		"dayjs": "^1.11.19",
+		"dotenv": "^17.2.3",
+		"seyfert": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^25.0.3",
+		"typescript": "^5.9.3"
+	}
+}
