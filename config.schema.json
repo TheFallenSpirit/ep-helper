@@ -1,0 +1,65 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "EP Helper Config",
+    "description": "Simple configuration of EP Helper and it's features.",
+    "required": ["status", "role-automations"],
+    "properties": {
+        "status": {
+            "type": "object",
+            "description": "App status configuration for EP Helper.",
+            "required": ["change-interval", "statuses"],
+            "properties": {
+                "change-interval": {
+                    "type": "number",
+                    "description": "How often (in seconds) EP Helper should switch between defined statuses.",
+                    "minimum": 30,
+                    "maximum": 600,
+                    "default": 120
+                },
+                "statuses": {
+                    "type": "array",
+                    "description": "A list of statuses that EP Helper should switch between.",
+                    "items": {
+                        "type": "object",
+                        "required": ["status", "message"],
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "description": "The status of the app (online/idle/dnd).",
+                                "enum": ["online", "idle", "dnd"]
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "The custom status message for the app."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "role-automations": {
+            "type": "array",
+            "description": "A list of role automations for EP Helper to run.",
+            "items": {
+                "type": "object",
+                "required": ["type", "primary-role", "trigger-roles"],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The type of role automation.",
+                        "enum": ["add-on-add", "remove-on-add"]
+                    },
+                    "primary-role": {
+                        "type": "string",
+                        "description": "The role ID to add or remove when this role automation is triggered."
+                    },
+                    "trigger-roles": {
+                        "type": "array",
+                        "description": "A list of role IDs that can trigger this role automation.",
+                        "items": { "type": "string" }
+                    }
+                }
+            }
+        }
+    }
+}

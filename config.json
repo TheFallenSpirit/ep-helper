@@ -1,0 +1,12 @@
+{
+    "$schema": "./config.schema.json",
+    "status": {
+        "change-interval": 120,
+        "statuses": [
+            { "status": "online", "message": "Watching over Eternal Paradise" }
+        ]
+    },
+    "role-automations": [
+        { "type": "remove-on-add", "primary-role": "1446431604074610812", "trigger-roles": ["1446431537318068294"] }
+    ]
+}
