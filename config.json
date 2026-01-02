@@ -3,7 +3,9 @@
     "status": {
         "change-interval": 120,
         "statuses": [
-            { "status": "online", "message": "Watching over Eternal Paradise" }
+            { "status": "online", "message": "Watching over Eternal Paradise" },
+            { "status": "online", "message": "Admiring all of you cuties" },
+            { "status": "online", "message": "Being super duper cool" }
         ]
     },
     "role-automations": [
