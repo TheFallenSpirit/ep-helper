@@ -1,7 +1,7 @@
 import { CommandContext, Declare, SubCommand } from 'seyfert';
 import { s } from '../../../../utilities.js';
 import { capitalCase } from 'change-case';
-import { createContainer, createTextDisplay } from '../../../../structures/components.js';
+import { createContainer, createSeparator, createTextDisplay } from '../../../../structures/components.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 @Declare({
@@ -19,15 +19,20 @@ export default class extends SubCommand {
             content: `${s(guild.name)} has no role automations.`
         });
 
-        const components = roleAutomations.map((automation) => {
+        const components = [
+            createTextDisplay(`### Role Automations ∙ ${s(guild.name)}`),
+            createSeparator()
+        ];
+
+        for (const automation of roleAutomations) {
             const lines = [
                 `- **${automation.name}** (${capitalCase(automation.type)})\n`,
                 `  - Role: <@&${automation.primaryRoleId}>\n`,
                 `  - Triggers: ${automation.triggerRoleIds.map((id) => `<@&${id}>`).join(', ')}`
             ];
 
-            return createTextDisplay(lines.join(''));
-        });
+            components.push(createTextDisplay(lines.join('')));
+        };
 
         const container = createContainer(components);
         await context.editOrReply({ components: [container], flags: MessageFlags.IsComponentsV2 });

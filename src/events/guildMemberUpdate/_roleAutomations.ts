@@ -1,7 +1,7 @@
 import { UsingClient, GuildMember } from 'seyfert';
 import { GuildI, RoleAutomation } from '../../models/Guild.js';
 
-export default async function handleRoleAutomations(client: UsingClient, guildConfig: GuildI,  member: GuildMember, oldMember?: GuildMember) {
+export default async function handleRoleAutomations(client: UsingClient, guildConfig: GuildI, member: GuildMember, oldMember?: GuildMember) {
     if (!oldMember) return;
 
     const memberRoles = member.roles.keys;
