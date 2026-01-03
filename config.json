@@ -1,6 +1,6 @@
 {
     "$schema": "./config.schema.json",
-    "whitelisted-guilds": ["1446386358812803095"],
+    "whitelisted-guilds": ["1446386358812803095", "1370922624397606952"],
     "status": {
         "change-interval": 120,
         "statuses": [
@@ -10,8 +10,5 @@
             { "status": "online", "message": "Barking at Voices's sexy face" },
             { "status": "dnd", "message": "Chilling with Eternal Slave" }
         ]
-    },
-    "role-automations": [
-        { "type": "remove-on-add", "primary-role": "1446431604074610812", "trigger-roles": ["1446431537318068294"] }
-    ]
+    }
 }

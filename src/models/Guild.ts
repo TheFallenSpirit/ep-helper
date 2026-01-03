@@ -1,7 +1,8 @@
 import { model, Schema } from 'mongoose';
 import { randomId } from '../utilities.js';
 
-interface RoleAutomation {
+export interface RoleAutomation {
+    name: string;
     primaryRoleId: string;
     triggerRoleIds: string[];
     type: 'add-on-add' | 'remove-on-add';
@@ -16,6 +17,7 @@ export interface GuildI {
 
 const roleAutomationSchema = new Schema<RoleAutomation>({
     type: { required: true, type: String },
+    name: { required: true, type: String },
     primaryRoleId: { required: true, type: String },
     triggerRoleIds: { required: true, type: [String] }
 }, { _id: false, versionKey: false });

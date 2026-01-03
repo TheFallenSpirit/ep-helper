@@ -4,7 +4,8 @@ export default config.bot({
     token: process.env.DISCORD_TOKEN ?? '',
     locations: {
         base: 'build/src',
-        events: 'events'
+        events: 'events',
+        commands: 'interactions/commands'
     },
     intents: [
         'Guilds',

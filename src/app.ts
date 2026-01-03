@@ -2,11 +2,12 @@ import { LimitedMemoryAdapter } from "seyfert";
 import { environmentCheck, extendedContext, startCrons } from "./extra.js";
 import middlewares from './middlewares.js';
 import EPClient from './client.js';
+import { connect } from 'mongoose';
 
 environmentCheck();
 const client = new EPClient({
     context: extendedContext,
-    commands: { reply: () => true },
+    commands: { reply: () => true, prefix: () => ['ep'] },
     allowedMentions: { parse: ['users'], replied_user: false }
 });
 
@@ -27,4 +28,8 @@ client.setServices({
 });
 
 startCrons(client);
+connect(process.env.MONGO_URL ?? '')
+.then(() => client.logger.info('Successfully connected to MongoDB.'))
+.catch((error) => client.logger.fatal(`Failed to connect to MongoDB -- ${String(error)}`));
+
 client.start();

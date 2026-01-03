@@ -8,8 +8,12 @@ export async function getGuild(guildId: string): Promise<GuildI> {
     const rawGuildConfig = await redis.get(`ep_guild:${guildId}`);
     if (rawGuildConfig) return JSON.parse(rawGuildConfig) as GuildI;
 
-    const guildConfig = await Guild.findOne({ guildId }, null, { upsert: true });
-    return guildConfig?.toObject()!;
+    let guildConfig = await Guild.findOne({ guildId });
+    if (!guildConfig) guildConfig = await Guild.create({ guildId });
+
+    const guildConfigObject = guildConfig.toObject();
+    await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject), 'EX', 604800);
+    return guildConfigObject;
 };
 
 export async function updateGuild(guildId: string, query: UpdateQuery<GuildI>): Promise<GuildI> {

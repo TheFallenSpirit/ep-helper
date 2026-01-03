@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "EP Helper Config",
     "description": "Simple configuration of EP Helper and it's features.",
-    "required": ["status", "role-automations", "whitelisted-guilds"],
+    "required": ["status", "whitelisted-guilds"],
     "properties": {
         "whitelisted-guilds": {
             "type": "array",
@@ -38,30 +38,6 @@
                                 "description": "The custom status message for the app."
                             }
                         }
-                    }
-                }
-            }
-        },
-        "role-automations": {
-            "type": "array",
-            "description": "A list of role automations for EP Helper to run.",
-            "items": {
-                "type": "object",
-                "required": ["type", "primary-role", "trigger-roles"],
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "description": "The type of role automation.",
-                        "enum": ["add-on-add", "remove-on-add"]
-                    },
-                    "primary-role": {
-                        "type": "string",
-                        "description": "The role ID to add or remove when this role automation is triggered."
-                    },
-                    "trigger-roles": {
-                        "type": "array",
-                        "description": "A list of role IDs that can trigger this role automation.",
-                        "items": { "type": "string" }
                     }
                 }
             }

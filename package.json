@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@sapphire/snowflake": "^3.5.5",
+		"change-case": "^5.4.4",
 		"cron": "^4.4.0",
 		"dayjs": "^1.11.19",
 		"dotenv": "^17.2.3",
