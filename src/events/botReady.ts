@@ -30,7 +30,7 @@ async function handleRotatingStatus(client: UsingClient) {
     if (config.status.statuses.length === 1) return setPresence(client, config.status.statuses[0]!);
 
     setInterval(async () => {
-        const presence = config.status.statuses[Math.floor(Math.random() - config.status.statuses.length)]!;
+        const presence = config.status.statuses[Math.floor(Math.random() * config.status.statuses.length)]!;
         setPresence(client, presence);
     }, config.status['change-interval'] * 1000);
 };
