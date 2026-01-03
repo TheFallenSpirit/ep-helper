@@ -2,11 +2,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "EP Helper Config",
     "description": "Simple configuration of EP Helper and it's features.",
-    "required": ["status", "role-automations", "whitelisted-servers"],
+    "required": ["status", "role-automations", "whitelisted-guilds"],
     "properties": {
-        "whitelisted-servers": {
+        "whitelisted-guilds": {
             "type": "array",
-            "description": "A list of whitelisted servers the bot will stay in.",
+            "description": "A list of whitelisted guilds the bot will stay in.",
             "items": { "type": "string" }
         },
         "status": {

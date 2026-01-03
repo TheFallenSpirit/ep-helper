@@ -6,7 +6,7 @@ export default async (client: UsingClient, done: CronOnCompleteCallback) => {
     const guildList = client.cache.guilds?.values() ?? [];
 
     for await (const guild of guildList) {
-        if (config['whitelisted-servers'].includes(guild.id)) continue;
+        if (config['whitelisted-guilds'].includes(guild.id)) continue;
         await guild.leave();
     };
 
