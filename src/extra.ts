@@ -27,7 +27,7 @@ function brackets(content: string) {
 };
 
 export function environmentCheck() {
-    const envKeys = ['DISCORD_TOKEN'];
+    const envKeys = ['DISCORD_TOKEN', 'MONGO_URL', 'REDIS_URL'];
     for (const key of envKeys) if (!process.env[key]) {
         console.error(`Required environment variable "${key}" wasn't provided.`);
         process.exit(1);

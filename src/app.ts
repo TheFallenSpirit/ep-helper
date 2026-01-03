@@ -1,6 +1,7 @@
 import { Client, LimitedMemoryAdapter } from "seyfert";
 import { environmentCheck, startCrons } from "./extra.js";
 import { basename } from 'node:path';
+import middlewares from './middlewares.js';
 
 environmentCheck();
 const client = new Client();
@@ -17,6 +18,7 @@ const adapter = new LimitedMemoryAdapter({
 });
 
 client.setServices({
+    middlewares,
     cache: { adapter, disabledCache: { bans: true, stickers: true, messages: true, presences: true, voiceStates: true } }
 });
 
