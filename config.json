@@ -1,11 +1,13 @@
 {
     "$schema": "./config.schema.json",
+    "whitelisted-servers": ["1446386358812803095"],
     "status": {
         "change-interval": 120,
         "statuses": [
             { "status": "online", "message": "Watching over Eternal Paradise" },
-            { "status": "online", "message": "Admiring all of you cuties" },
-            { "status": "online", "message": "Being super duper cool" }
+            { "status": "online", "message": "Looking at all you cuties" },
+            { "status": "online", "message": "Telling Madi she's cute <3" },
+            { "status": "dnd", "message": "Chilling with Eternal Slave" }
         ]
     },
     "role-automations": [

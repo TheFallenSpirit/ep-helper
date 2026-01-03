@@ -1,12 +1,9 @@
 import { Client, LimitedMemoryAdapter } from "seyfert";
-import { environmentCheck } from "./extra.js";
+import { environmentCheck, startCrons } from "./extra.js";
 import { basename } from 'node:path';
 
 environmentCheck();
 const client = new Client();
-
-client.events.filter = (path) => !basename(path).startsWith('_');
-client.commands.filter = (path) => !basename(path).startsWith('_');
 
 const adapter = new LimitedMemoryAdapter({
     default: { expire: 3600000 },
@@ -22,5 +19,9 @@ const adapter = new LimitedMemoryAdapter({
 client.setServices({
     cache: { adapter, disabledCache: { bans: true, stickers: true, messages: true, presences: true, voiceStates: true } }
 });
+
+startCrons(client);
+client.events.filter = (path) => !basename(path).startsWith('_');
+client.commands.filter = (path) => !basename(path).startsWith('_');
 
 client.start();
