@@ -1,10 +1,14 @@
-import { Client, LimitedMemoryAdapter } from "seyfert";
-import { environmentCheck, startCrons } from "./extra.js";
-import { basename } from 'node:path';
+import { LimitedMemoryAdapter } from "seyfert";
+import { environmentCheck, extendedContext, startCrons } from "./extra.js";
 import middlewares from './middlewares.js';
+import EPClient from './client.js';
 
 environmentCheck();
-const client = new Client();
+const client = new EPClient({
+    context: extendedContext,
+    commands: { reply: () => true },
+    allowedMentions: { parse: ['users'], replied_user: false }
+});
 
 const adapter = new LimitedMemoryAdapter({
     default: { expire: 3600000 },
@@ -23,7 +27,4 @@ client.setServices({
 });
 
 startCrons(client);
-client.events.filter = (path) => !basename(path).startsWith('_');
-client.commands.filter = (path) => !basename(path).startsWith('_');
-
 client.start();

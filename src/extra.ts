@@ -1,8 +1,10 @@
 import { CronJob } from 'cron';
 import dayjs from 'dayjs';
-import { Logger, UsingClient } from 'seyfert';
+import { AnyContext, Logger, UsingClient } from 'seyfert';
 import { bgRed, bold, cyan, dim, gray, LogLevels, red, yellow } from 'seyfert/lib/common/index.js';
 import whitelistedGuildCheck from './crons/whitelistedGuildCheck.js';
+import { MessageFlags } from 'seyfert/lib/types/index.js';
+import lang, { LangKey, LangProps } from './lang.js';
 
 Logger.customize((_, level, args) => {
     let color = red;
@@ -42,3 +44,9 @@ export function startCrons(client: UsingClient) {
         onComplete: () => client.logger.debug('[CRON] Successfully completed whitelistedGuildCheck job.')
     });
 };
+
+export const extendedContext = (_interaction: any) => ({
+    replyWith: (context: AnyContext, key: LangKey, props?: LangProps) => {
+        return context.editOrReply({ flags: MessageFlags.Ephemeral, content: lang(context.client, key, props) });
+    }
+});
