@@ -1,6 +1,7 @@
 import { capitalCase, noCase } from 'change-case';
-import { AnyContext, CommandContext, OnOptionsReturnObject, PermissionStrings } from 'seyfert';
+import { AnyContext, CommandContext, Message, OnOptionsReturnObject, PermissionStrings } from 'seyfert';
 import { ChannelType, MessageFlags } from 'seyfert/lib/types/index.js';
+import { getGuild } from '../store.js';
 
 export default {
     onOptionsError,
@@ -102,4 +103,11 @@ function listFormat(options: (string | ChoiceObject)[]) {
 
 function channelTypeFormat(types: number[]) {
     return listFormat(types.map((type) => noCase(ChannelType[type] ?? '').replace('guild ', '')));
+};
+
+export async function prefix(message: Message) {
+    if (!message.guildId) return ['ep'];    
+    const guildConfig = await getGuild(message.guildId);
+    if (guildConfig.prefix) return ['ep', guildConfig.prefix];
+    return ['ep'];
 };

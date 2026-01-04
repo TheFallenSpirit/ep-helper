@@ -3,21 +3,14 @@ import { environmentCheck, extendedContext, startCrons } from "./extra.js";
 import middlewares from './middlewares.js';
 import EPClient from './client.js';
 import { connect } from 'mongoose';
-import defaults from './common/defaults.js';
+import defaults, { prefix } from './common/defaults.js';
 import handleCommand from './structures/handleCommand.js';
 
 environmentCheck();
 const client = new EPClient({
     context: extendedContext,
-    allowedMentions: {
-        parse: ['users'],
-        replied_user: false
-    },
-    commands: {
-        reply: () => true,
-        prefix: () => ['ep'],
-        defaults
-    }
+    commands: { prefix, defaults, reply: () => true },
+    allowedMentions: { parse: ['users'], replied_user: false }
 });
 
 const adapter = new LimitedMemoryAdapter({
@@ -34,7 +27,10 @@ const adapter = new LimitedMemoryAdapter({
 client.setServices({
     middlewares,
     handleCommand,
-    cache: { adapter, disabledCache: { bans: true, stickers: true, messages: true, presences: true, voiceStates: true } }
+    cache: {
+        adapter,
+        disabledCache: { bans: true, stickers: true, messages: true, presences: true, voiceStates: true }
+    }
 });
 
 startCrons(client);
