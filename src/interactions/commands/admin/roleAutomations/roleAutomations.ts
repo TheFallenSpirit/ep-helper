@@ -3,6 +3,7 @@ import { getGuild } from '../../../../store.js';
 
 @Declare({
     name: 'role-automations',
+    aliases: ['ra'],
     contexts: ['Guild'],
     botPermissions: ['ManageRoles'],
     integrationTypes: ['GuildInstall'],
@@ -12,7 +13,6 @@ import { getGuild } from '../../../../store.js';
 
 @AutoLoad()
 @Middlewares(['guildConfig'])
-
 export default class extends Command {};
 
 export async function roleAutomationsAutocomplete(interaction: AutocompleteInteraction) {
