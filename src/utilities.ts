@@ -14,3 +14,7 @@ export function isValidSnowflake(snowflake: string) {
 	const epoch = DiscordSnowflake.generate({ timestamp: DiscordSnowflake.epoch });
 	return Snowflake.compare(epoch, snowflake) < 0 && Snowflake.compare(snowflake, DiscordSnowflake.generate()) < 0;
 };
+
+export function wait(time: number) {
+	return new Promise((resolve) => setTimeout(resolve, time));
+};

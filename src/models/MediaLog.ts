@@ -15,6 +15,6 @@ const mediaLogSchema = new Schema<MediaLogI>({
     authorId: { required: true, type: String },
     channelId: { required: true, type: String },
     messageId: { required: true, type: String }
-}, { _id: false, versionKey: false, timestamps: { createdAt: true } });
+}, { _id: false, versionKey: false, timestamps: { createdAt: true, updatedAt: false } });
 
 export default model('media-logs', mediaLogSchema);

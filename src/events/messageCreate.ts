@@ -14,12 +14,13 @@ export default createEvent({
         if (
             guildConfig.mediaChannels?.includes(channel.id) ||
             ('parentId' in channel) && channel.parentId && guildConfig.mediaChannels?.includes(channel.parentId)
-        ) await MediaLog.create({
-            guildId: message.guildId,
-            authorId: message.author.id,
-            channelId: message.channelId,
-            messageId: message.id
-        });
+        ) {
+            if (message.attachments.length > 0) await MediaLog.create({
+                guildId: message.guildId,
+                authorId: message.author.id,
+                channelId: message.channelId,
+                messageId: message.id
+            });
+        };
     }
 });
-''
