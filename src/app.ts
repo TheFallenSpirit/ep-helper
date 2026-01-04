@@ -3,13 +3,21 @@ import { environmentCheck, extendedContext, startCrons } from "./extra.js";
 import middlewares from './middlewares.js';
 import EPClient from './client.js';
 import { connect } from 'mongoose';
+import defaults from './common/defaults.js';
 import handleCommand from './structures/handleCommand.js';
 
 environmentCheck();
 const client = new EPClient({
     context: extendedContext,
-    commands: { reply: () => true, prefix: () => ['ep'] },
-    allowedMentions: { parse: ['users'], replied_user: false }
+    allowedMentions: {
+        parse: ['users'],
+        replied_user: false
+    },
+    commands: {
+        reply: () => true,
+        prefix: () => ['ep'],
+        defaults
+    }
 });
 
 const adapter = new LimitedMemoryAdapter({
