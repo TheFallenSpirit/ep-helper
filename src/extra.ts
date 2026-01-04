@@ -4,7 +4,7 @@ import { AnyContext, Logger, UsingClient } from 'seyfert';
 import { bgRed, bold, cyan, dim, gray, LogLevels, red, yellow } from 'seyfert/lib/common/index.js';
 import whitelistedGuildCheck from './crons/whitelistedGuildCheck.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
-import lang, { LangKey, LangProps } from './lang.js';
+import lang, { LangKey, LangProps } from './common/lang.js';
 
 Logger.customize((_, level, args) => {
     let color = red;

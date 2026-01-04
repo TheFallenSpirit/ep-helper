@@ -1,10 +1,10 @@
 import { LimitedMemoryAdapter } from "seyfert";
 import { environmentCheck, extendedContext, startCrons } from "./extra.js";
-import middlewares from './middlewares.js';
-import EPClient from './client.js';
+import middlewares from './common/middlewares.js';
 import { connect } from 'mongoose';
 import defaults, { prefix } from './common/defaults.js';
 import handleCommand from './structures/handleCommand.js';
+import EPClient from './client.js';
 
 environmentCheck();
 const client = new EPClient({

@@ -1,6 +1,6 @@
 import { AnyContext, Client, ParseClient, ParseMiddlewares } from "seyfert";
-import middlewares from './middlewares.ts';
-import { LangKey, LangProps } from './lang.ts';
+import middlewares from './common/middlewares.ts';
+import { LangKey, LangProps } from './common/lang.ts';
 
 declare module 'seyfert' {
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof middlewares> {}

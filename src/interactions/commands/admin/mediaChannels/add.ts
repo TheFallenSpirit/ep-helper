@@ -1,6 +1,6 @@
 import { CommandContext, createChannelOption, Declare, Options, SubCommand } from 'seyfert';
 import { mediaChannelTypes } from './mediaChannels.js';
-import { s } from '../../../../utilities.js';
+import { s } from '../../../../common/utilities.js';
 import { updateGuild } from '../../../../store.js';
 
 const options = {

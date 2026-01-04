@@ -1,6 +1,6 @@
 import { CommandContext, createRoleOption, createStringOption, Declare, Options, SubCommand } from 'seyfert';
-import { isValidSnowflake, s } from '../../../../utilities.js';
-import { roleMentionRegex } from '../../../../common.js';
+import { isValidSnowflake, s } from '../../../../common/utilities.js';
+import { roleMentionRegex } from '../../../../common/variables.js';
 import { updateGuild } from '../../../../store.js';
 
 const options = {

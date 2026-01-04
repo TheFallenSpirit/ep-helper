@@ -1,6 +1,6 @@
+import { basename } from 'path';
 import { Client, ClientOptions } from 'seyfert';
-import lang, { LangKey, LangProps } from './lang.js';
-import { basename } from 'node:path';
+import lang, { LangKey, LangProps } from './common/lang.js';
 
 export default class EPClient extends Client {
     constructor(options?: ClientOptions) {

@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { randomId } from '../utilities.js';
+import { randomId } from '../common/utilities.js';
 
 export interface RoleAutomation {
     name: string;

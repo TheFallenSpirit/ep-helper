@@ -1,5 +1,5 @@
 import { CommandContext, Declare, SubCommand } from 'seyfert';
-import { s } from '../../../../utilities.js';
+import { s } from '../../../../common/utilities.js';
 import { capitalCase } from 'change-case';
 import { createContainer, createSeparator, createTextDisplay } from '../../../../structures/components.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
