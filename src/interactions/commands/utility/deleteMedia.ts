@@ -1,6 +1,6 @@
 import { Command, CommandContext, createUserOption, Declare, Middlewares, Options } from 'seyfert';
 import MediaLog from '../../../models/MediaLog.js';
-import { s, wait } from '../../../common/utilities.js';
+import { s, wait } from '@fallencodes/seyfert-utils';
 
 const options = {
     user: createUserOption({

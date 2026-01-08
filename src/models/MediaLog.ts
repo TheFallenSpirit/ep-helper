@@ -1,5 +1,5 @@
+import { randomId } from '@fallencodes/seyfert-utils';
 import { model, Schema } from 'mongoose';
-import { randomId } from '../common/utilities.js';
 
 interface MediaLogI {
     _id: string;

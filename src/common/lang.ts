@@ -1,5 +1,5 @@
+import { s } from '@fallencodes/seyfert-utils';
 import { UsingClient } from 'seyfert';
-import { s } from './utilities.js';
 
 export type LangKey = keyof typeof lines;
 export type LangProps = Record<string, any>;
