@@ -8,15 +8,17 @@ export interface RoleAutomation {
     type: 'add-on-add' | 'remove-on-add';
 }
 
+interface VIPRole {
+    canBeHoisted?: boolean;
+    canBeMentionable?: boolean;
+    defaultMemberLimit?: boolean;
+}
+
 interface VIP {
+    role?: VIPRole;
     enabled?: boolean;
     vipRoleId?: string;
     defaultMaxReactions?: number;
-    role?: {
-        canBeHoisted?: boolean;
-        canBeMentionable?: boolean;
-        defaultMemberLimit?: boolean;
-    };
 }
 
 export interface GuildI {
@@ -35,7 +37,7 @@ const roleAutomationSchema = new Schema<RoleAutomation>({
     triggerRoleIds: { required: true, type: [String] }
 }, { _id: false, versionKey: false });
 
-const vipRoleSchema = new Schema<VIP['role']>({
+const vipRoleSchema = new Schema<VIPRole>({
     canBeHoisted: { required: false, type: Boolean },
     canBeMentionable: { required: false, type: Boolean },
     defaultMemberLimit: { required: false, type: Number }
