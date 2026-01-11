@@ -8,7 +8,19 @@ export interface RoleAutomation {
     type: 'add-on-add' | 'remove-on-add';
 }
 
+interface VIP {
+    enabled?: boolean;
+    vipRoleId?: string;
+    defaultMaxReactions?: number;
+    role?: {
+        canBeHoisted?: boolean;
+        canBeMentionable?: boolean;
+        defaultMemberLimit?: boolean;
+    };
+}
+
 export interface GuildI {
+    vip?: VIP;
     _id: string;
     prefix?: string;
     guildId: string;
@@ -23,12 +35,26 @@ const roleAutomationSchema = new Schema<RoleAutomation>({
     triggerRoleIds: { required: true, type: [String] }
 }, { _id: false, versionKey: false });
 
+const vipRoleSchema = new Schema<VIP['role']>({
+    canBeHoisted: { required: false, type: Boolean },
+    canBeMentionable: { required: false, type: Boolean },
+    defaultMemberLimit: { required: false, type: Number }
+}, { _id: false, versionKey: false });
+
+const vipSchema = new Schema<VIP>({
+    enabled: { required: false, type: Boolean },
+    vipRoleId: { required: false, type: String },
+    defaultMaxReactions: { required: false, type: Number },
+    role: { required: false, type: vipRoleSchema }
+}, { _id: false, versionKey: false });
+
 const guildSchema = new Schema<GuildI>({
     _id: { required: true, type: String, default: () => randomId(16) },
     guildId: { required: true, type: String },
     prefix: { required: false, type: String },
+    vip: { required: false, type: vipSchema },
     mediaChannels: { required: false, type: [String] },
-    roleAutomations: { required: false, type: [roleAutomationSchema] }    
+    roleAutomations: { required: false, type: [roleAutomationSchema] } 
 }, { _id: false, versionKey: false, timestamps: true });
 
 export default model('guilds', guildSchema);
