@@ -1,6 +1,7 @@
 import { Redis } from 'ioredis';
 import Guild, { GuildI } from './models/Guild.js';
 import { UpdateQuery } from 'mongoose';
+import VIP, { VIPI } from './models/VIP.js';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
 
@@ -23,4 +24,16 @@ export async function updateGuild(guildId: string, query: UpdateQuery<GuildI>): 
     const guildConfigObject = guildConfig.toObject();
     await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject), 'EX', 604800);
     return guildConfigObject;
+};
+
+export async function getVipProfile(guildId: string, userId: string): Promise<VIPI | undefined> {
+    const rawVipProfile = await redis.get(`ep_vip_profile:${guildId}:${userId}`);
+    if (rawVipProfile) return JSON.parse(rawVipProfile) as VIPI;
+
+    const dbVipProfile = await VIP.findOne({ guildId, userId });
+    if (!dbVipProfile) return;
+
+    const vipProfileObject = dbVipProfile.toObject();
+    await redis.set(`ep_vip_profile:${guildId}:${userId}`, JSON.stringify(vipProfileObject), 'EX', 604800);
+    return vipProfileObject;
 };

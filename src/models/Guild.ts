@@ -9,6 +9,7 @@ export interface RoleAutomation {
 }
 
 interface VIPRole {
+    enabled?: boolean;
     canBeHoisted?: boolean;
     canBeMentionable?: boolean;
     defaultMemberLimit?: boolean;
@@ -38,6 +39,7 @@ const roleAutomationSchema = new Schema<RoleAutomation>({
 }, { _id: false, versionKey: false });
 
 const vipRoleSchema = new Schema<VIPRole>({
+    enabled: { required: false, type: Boolean },
     canBeHoisted: { required: false, type: Boolean },
     canBeMentionable: { required: false, type: Boolean },
     defaultMemberLimit: { required: false, type: Number }
