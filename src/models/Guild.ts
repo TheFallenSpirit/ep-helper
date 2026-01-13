@@ -15,7 +15,9 @@ interface VIPRole {
     defaultMemberLimit?: boolean;
 }
 
-interface VIP {
+interface VIPTier {
+    _id: string;
+    name: string;
     role?: VIPRole;
     enabled?: boolean;
     vipRoleId?: string;
@@ -23,11 +25,11 @@ interface VIP {
 }
 
 export interface GuildI {
-    vip?: VIP;
     _id: string;
     prefix?: string;
     guildId: string;
     mediaChannels?: string[];
+    vipTiers?: Map<string, VIPTier>;
     roleAutomations?: RoleAutomation[];
 }
 
@@ -45,7 +47,9 @@ const vipRoleSchema = new Schema<VIPRole>({
     defaultMemberLimit: { required: false, type: Number }
 }, { _id: false, versionKey: false });
 
-const vipSchema = new Schema<VIP>({
+const vipTierSchema = new Schema<VIPTier>({
+    _id: { required: true, type: String, default: () => randomId(8) },
+    name: { required: true, type: String },
     enabled: { required: false, type: Boolean },
     vipRoleId: { required: false, type: String },
     defaultMaxReactions: { required: false, type: Number },
@@ -56,9 +60,9 @@ const guildSchema = new Schema<GuildI>({
     _id: { required: true, type: String, default: () => randomId(16) },
     guildId: { required: true, type: String },
     prefix: { required: false, type: String },
-    vip: { required: false, type: vipSchema },
     mediaChannels: { required: false, type: [String] },
-    roleAutomations: { required: false, type: [roleAutomationSchema] } 
+    roleAutomations: { required: false, type: [roleAutomationSchema] },
+    vipTiers: { required: false, type: Map, of: vipTierSchema }
 }, { _id: false, versionKey: false, timestamps: true });
 
 export default model('guilds', guildSchema);

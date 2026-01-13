@@ -5,15 +5,26 @@ import VIP, { VIPI } from './models/VIP.js';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
 
+export function reviver(_key: string, value: any) {
+    if (typeof value === 'object' && value !== null) if (value.dataType === 'Map') return new Map(value.value);
+    return value;
+};
+
+export function replacer(_key: string, value: any) {
+    if (typeof value === 'bigint') return value.toString();
+    if (value instanceof Map) return { dataType: 'Map', value: [...value]};
+    return value;
+};
+
 export async function getGuild(guildId: string): Promise<GuildI> {
     const rawGuildConfig = await redis.get(`ep_guild:${guildId}`);
-    if (rawGuildConfig) return JSON.parse(rawGuildConfig) as GuildI;
+    if (rawGuildConfig) return JSON.parse(rawGuildConfig, reviver) as GuildI;
 
     let guildConfig = await Guild.findOne({ guildId });
     if (!guildConfig) guildConfig = await Guild.create({ guildId });
 
     const guildConfigObject = guildConfig.toObject();
-    await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject), 'EX', 604800);
+    await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject, replacer), 'EX', 604800);
     return guildConfigObject;
 };
 
@@ -22,7 +33,7 @@ export async function updateGuild(guildId: string, query: UpdateQuery<GuildI>): 
     if (!guildConfig) throw new Error(`The specified guild wasn't found -- ${guildId}`);
 
     const guildConfigObject = guildConfig.toObject();
-    await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject), 'EX', 604800);
+    await redis.set(`ep_guild:${guildId}`, JSON.stringify(guildConfigObject, replacer), 'EX', 604800);
     return guildConfigObject;
 };
 
