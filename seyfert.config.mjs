@@ -5,6 +5,7 @@ export default config.bot({
     locations: {
         base: 'build/src',
         events: 'events',
+        components: 'interactions',
         commands: 'interactions/commands'
     },
     intents: [

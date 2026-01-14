@@ -1,10 +1,19 @@
-import { createMiddleware } from 'seyfert';
+import { Collection, createMiddleware } from 'seyfert';
 import { GuildI } from '../models/Guild.js';
 import config from '../../config.json' with { type: 'json' };
-import { getGuild, getVipProfile, redis } from '../store.js';
+import { getGuild, getVipProfile, redis, updateVipProfile } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import { s } from '@fallencodes/seyfert-utils';
 import VIP, { VIPI } from '../models/VIP.js';
+
+const userLock = createMiddleware<void>(async ({ next, context }) => {
+    if (!('customId' in context)) return next();
+
+    const userId = context.customId.split(':').at(-1)!;
+    if (userId !== context.author.id) return context.replyWith(context, 'invalidUser');
+
+    next();
+});
 
 const guildConfig = createMiddleware<GuildI>(async ({ next, context }) => {
     if (!config['whitelisted-guilds'].includes(context.guildId!)) return context.editOrReply({
@@ -58,6 +67,7 @@ const vipProfile = createMiddleware<VIPI>(async ({ next, context }) => {
 });
 
 export default {
+    userLock,
     vipProfile,
     guildConfig
 };
