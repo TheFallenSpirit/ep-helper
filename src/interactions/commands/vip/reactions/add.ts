@@ -1,7 +1,7 @@
 import { s } from '@fallencodes/seyfert-utils';
 import { CommandContext, createStringOption, Declare, Group, Options, SubCommand } from 'seyfert';
 import { customEmojiRegex, emojiRegex } from '../../../../common/variables.js';
-import { updateVipProfile } from '../../../../store.js';
+import { setCachedAutoReaction, updateVipProfile } from '../../../../store.js';
 
 const options = {
     emoji: createStringOption({
@@ -20,7 +20,7 @@ const options = {
 
 export default class extends SubCommand {
     run = async (context: CommandContext<typeof options, 'vipProfile' | 'guildConfig'>) => {
-        const vipProfile = context.metadata.vipProfile;
+        let vipProfile = context.metadata.vipProfile;
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
         if (!vipTier) return context.replyWith(context, 'invalidVipTier', { id: vipProfile.tierId });
 
@@ -54,7 +54,14 @@ export default class extends SubCommand {
             content: `Hold up! | The emoji "${emoji}" is already in your auto reactions.`
         });
 
-        await updateVipProfile(context.guildId!, context.author.id, { $push: { 'reaction.items': emoji } });
+        vipProfile = await updateVipProfile(context.guildId!, context.author.id, { $push: { 'reaction.items': emoji } });
         await context.editOrReply({ content: `Successfully added "${emoji}" to your auto reactions.` });
+
+        await setCachedAutoReaction(context.guildId!, {
+            userId: context.author.id,
+            roleId: vipProfile.role?.id,
+            items: vipProfile.reaction?.items ?? [],
+            triggers: vipProfile.reaction?.triggers ?? []
+        });
     };
 };

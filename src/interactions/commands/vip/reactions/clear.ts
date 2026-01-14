@@ -1,5 +1,5 @@
 import { CommandContext, Declare, Group, SubCommand } from 'seyfert';
-import { updateVipProfile } from '../../../../store.js';
+import { clearCachedAutoReactions, updateVipProfile } from '../../../../store.js';
 
 @Declare({
     name: 'clear',
@@ -20,5 +20,6 @@ export default class extends SubCommand {
 
         await updateVipProfile(context.guildId!, context.author.id, { $unset: { 'reaction.items': [] } });
         await context.editOrReply({ content: `Successfully cleared your auto reactions.` });
+        await clearCachedAutoReactions(context.guildId!, context.author.id);
     };
 };

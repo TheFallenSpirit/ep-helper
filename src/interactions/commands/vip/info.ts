@@ -1,7 +1,7 @@
 import { s } from '@fallencodes/seyfert-utils';
 import { Button, CommandContext, ContainerBuilderComponents, Declare, Guild, GuildRole, SubCommand, TopLevelBuilders } from 'seyfert';
 import { ButtonStyle, MessageFlags } from 'seyfert/lib/types/index.js';
-import { updateVipProfile } from '../../../store.js';
+import { setCachedAutoReaction, updateVipProfile } from '../../../store.js';
 import { VIPI } from '../../../models/VIP.js';
 import { createTextDisplay, createSeparator, createContainer, createActionRow, createButton } from '@fallencodes/seyfert-utils/components/message';
 
@@ -25,17 +25,21 @@ export default class extends SubCommand {
         });
 
         let color: number | undefined;
+        let roleId: string | undefined;
         if (context.interaction) await context.deferReply();
         const vipRoleEnabled = vipTier.role?.enabled === true;
         const containerComponents: ContainerBuilderComponents[] = [];
 
         if (vipRoleEnabled) {
-            const roleComponents = await getVipRoleComponents(context, guild, vipProfile);
+            const vipRoleData = await getVipRoleData(context, guild, vipProfile);
 
-            if (roleComponents.error) return context.editOrReply({
+            if (vipRoleData.error) return context.editOrReply({
                 flags: MessageFlags.Ephemeral,
-                content: roleComponents.message
-            }); else containerComponents.push(...roleComponents.components);
+                content: vipRoleData.message
+            });
+            
+            roleId = vipRoleData.roleId;
+            containerComponents.push(...vipRoleData.components);
         } else containerComponents.push(
             createTextDisplay(`### VIP Role\nYour VIP tier ${s(vipTier.name)} doesn't have an included VIP role.`)
         );
@@ -47,13 +51,17 @@ export default class extends SubCommand {
         const reactionLimit = vipTier.reactions?.defaultReactionLimit;
 
         const reactionLines = [`### Auto Reactions\n`];
-        if (!triggerLimit || !reactionLimit) reactionLines.push(
-            `Your VIP tier ${s(vipTier.name)} doesn't have any included auto reactions.`
-        ); else reactionLines.push(
-            `**Triggers (${triggers.length}/${triggerLimit})**: ${context.author}`,
-            `${triggers.length > 0 ? `, ${triggers.map((t) => `\`${t}\``).join(', ')}` : ''}\n`,
-            `**Reactions (${reactions.length}/${reactionLimit})**: ${reactions.join(', ') || 'None'}`
-        );
+        if (!triggerLimit || !reactionLimit) {
+            reactionLines.push(`Your VIP tier ${s(vipTier.name)} doesn't have any included auto reactions.`);
+        } else {
+            await setCachedAutoReaction(guild.id, { roleId, userId: context.author.id, triggers, items: reactions });
+
+            reactionLines.push(
+                `**Triggers (${triggers.length}/${triggerLimit})**: ${context.author}`,
+                `${triggers.length > 0 ? `, ${triggers.map((t) => `\`${t}\``).join(', ')}` : ''}\n`,
+                `**Reactions (${reactions.length}/${reactionLimit})**: ${reactions.join(', ') || 'None'}`
+            );
+        };
 
         const metaLines: string[] = [];
         containerComponents.push(createSeparator(), createTextDisplay(reactionLines.join('')));
@@ -140,15 +148,15 @@ export default class extends SubCommand {
     };
 };
 
-type VIPRoleComponentsResponse =
+type VIPRoleDataResponse =
 | ({ error: true, message: string })
-| ({ error: false, components: ContainerBuilderComponents[] })
+| ({ error: false, roleId: string, components: ContainerBuilderComponents[] })
 
-async function getVipRoleComponents(
+async function getVipRoleData(
     context: CommandContext,
     guild: Guild<'api' | 'cached'>,
     vipProfile: VIPI
-): Promise<VIPRoleComponentsResponse> {
+): Promise<VIPRoleDataResponse> {
     let error: string | undefined;
     let vipRole: GuildRole | undefined;
     const displayName = s(context.member?.displayName ?? context.author.globalName ?? context.author.username);
@@ -192,6 +200,7 @@ async function getVipRoleComponents(
 
     return ({
         error: false,
+        roleId: vipRole.id,
         components: [
             createTextDisplay(lines.join('')),
             createSeparator(),

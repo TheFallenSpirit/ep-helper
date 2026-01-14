@@ -2,19 +2,9 @@ import { Redis } from 'ioredis';
 import Guild, { GuildI } from './models/Guild.js';
 import { UpdateQuery } from 'mongoose';
 import VIP, { VIPI } from './models/VIP.js';
+import { replacer, reviver } from '@fallencodes/seyfert-utils';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
-
-export function reviver(_key: string, value: any) {
-    if (typeof value === 'object' && value !== null) if (value.dataType === 'Map') return new Map(value.value);
-    return value;
-};
-
-export function replacer(_key: string, value: any) {
-    if (typeof value === 'bigint') return value.toString();
-    if (value instanceof Map) return { dataType: 'Map', value: [...value]};
-    return value;
-};
 
 export async function getGuild(guildId: string): Promise<GuildI> {
     const rawGuildConfig = await redis.get(`ep_guild:${guildId}`);
@@ -56,4 +46,28 @@ export async function updateVipProfile(guildId: string, userId: string, query: U
     const vipProfileObject = vipProfile.toObject();
     await redis.set(`ep_vip_profile:${guildId}:${userId}`, JSON.stringify(vipProfileObject, replacer), 'EX', 604800);
     return vipProfileObject;
+};
+
+export interface CachedAutoReactionI {
+    userId: string;
+    roleId?: string;
+    items: string[];
+    triggers: string[];
+}
+
+export async function setCachedAutoReaction(guildId: string, reaction: CachedAutoReactionI) {
+    await clearCachedAutoReactions(guildId, reaction.userId);
+    if (reaction.items.length < 1) return;
+    await redis.sadd(`ep_reactions:${guildId}`, JSON.stringify(reaction, replacer));
+};
+
+export async function clearCachedAutoReactions(guildId: string, userId: string) {
+    const key = `ep_reactions:${guildId}`;
+    const rawReactions = await redis.smembers(key);
+    const reactions = rawReactions.map((raw) => JSON.parse(raw, reviver) as CachedAutoReactionI);
+
+    const pipeline = redis.pipeline();
+    const userReactions = reactions.filter((reaction) => reaction.userId === userId);
+    pipeline.srem(key, userReactions.map((reaction) => JSON.stringify(reaction, replacer)));
+    await pipeline.exec();
 };

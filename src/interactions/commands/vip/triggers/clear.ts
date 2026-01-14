@@ -1,5 +1,5 @@
 import { CommandContext, Declare, Group, SubCommand } from 'seyfert';
-import { updateVipProfile } from '../../../../store.js';
+import { setCachedAutoReaction, updateVipProfile } from '../../../../store.js';
 
 @Declare({
     name: 'clear',
@@ -9,7 +9,7 @@ import { updateVipProfile } from '../../../../store.js';
 @Group('triggers')
 export default class extends SubCommand {
     run = async (context: CommandContext<{}, 'vipProfile' | 'guildConfig'>) => {
-        const vipProfile = context.metadata.vipProfile;
+        let vipProfile = context.metadata.vipProfile;
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
         if (!vipTier) return context.replyWith(context, 'invalidVipTier', { id: vipProfile.tierId });
 
@@ -18,7 +18,14 @@ export default class extends SubCommand {
             content: `Hold up! | You don't have any auto reaction triggers.`
         });
 
-        await updateVipProfile(context.guildId!, context.author.id, { $unset: { 'reaction.triggers': [] } });
+        vipProfile = await updateVipProfile(context.guildId!, context.author.id, { $unset: { 'reaction.triggers': [] } });
         await context.editOrReply({ content: `Successfully cleared your auto reaction triggers.` });
+
+        await setCachedAutoReaction(context.guildId!, {
+            userId: context.author.id,
+            roleId: vipProfile.role?.id,
+            items: vipProfile.reaction?.items ?? [],
+            triggers: vipProfile.reaction?.triggers ?? []
+        });
     };
 };

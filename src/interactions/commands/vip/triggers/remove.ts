@@ -1,5 +1,5 @@
 import { CommandContext, createStringOption, Declare, Group, Options, SubCommand } from 'seyfert';
-import { updateVipProfile } from '../../../../store.js';
+import { setCachedAutoReaction, updateVipProfile } from '../../../../store.js';
 
 const options = {
     trigger: createStringOption({
@@ -20,18 +20,25 @@ const options = {
 
 export default class extends SubCommand {
     run = async (context: CommandContext<typeof options, 'vipProfile' | 'guildConfig'>) => {
-        const vipProfile = context.metadata.vipProfile;
+        let vipProfile = context.metadata.vipProfile;
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
         if (!vipTier) return context.replyWith(context, 'invalidVipTier', { id: vipProfile.tierId });
 
-        const trigger = context.options.trigger.trim();
         if (context.interaction) await context.deferReply(true);
+        const trigger = context.options.trigger.trim().toLowerCase();
 
         if (!vipProfile.reaction?.triggers?.includes(trigger)) return context.editOrReply({
             content: `Hold up! | The trigger "${trigger}" isn't one of your triggers.`
         });
 
-        await updateVipProfile(context.guildId!, context.author.id, { $pull: { 'reaction.triggers': trigger } });
+        vipProfile = await updateVipProfile(context.guildId!, context.author.id, { $pull: { 'reaction.triggers': trigger } });
         await context.editOrReply({ content: `Successfully removed "${trigger}" from your auto reaction triggers.` });
+
+        await setCachedAutoReaction(context.guildId!, {
+            userId: context.author.id,
+            roleId: vipProfile.role?.id,
+            items: vipProfile.reaction?.items ?? [],
+            triggers: vipProfile.reaction?.triggers ?? []
+        });
     };
 };
