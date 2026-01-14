@@ -45,6 +45,15 @@ export async function getVipProfile(guildId: string, userId: string): Promise<VI
     if (!dbVipProfile) return;
 
     const vipProfileObject = dbVipProfile.toObject();
-    await redis.set(`ep_vip_profile:${guildId}:${userId}`, JSON.stringify(vipProfileObject), 'EX', 604800);
+    await redis.set(`ep_vip_profile:${guildId}:${userId}`, JSON.stringify(vipProfileObject, replacer), 'EX', 604800);
+    return vipProfileObject;
+};
+
+export async function updateVipProfile(guildId: string, userId: string, query: UpdateQuery<VIPI>): Promise<VIPI> {
+    const vipProfile = await VIP.findOneAndUpdate({ guildId, userId }, query, { new: true });
+    if (!vipProfile) throw new Error(`The specified VIP profile wasn't found -- ${guildId}:${userId}`);
+
+    const vipProfileObject = vipProfile.toObject();
+    await redis.set(`ep_vip_profile:${guildId}:${userId}`, JSON.stringify(vipProfileObject, replacer), 'EX', 604800);
     return vipProfileObject;
 };

@@ -8,6 +8,11 @@ export interface RoleAutomation {
     type: 'add-on-add' | 'remove-on-add';
 }
 
+interface VIPReactions {
+    defaultTriggerLimit?: number;
+    defaultReactionLimit?: number;
+}
+
 interface VIPRole {
     enabled?: boolean;
     canBeHoisted?: boolean;
@@ -15,13 +20,13 @@ interface VIPRole {
     defaultMemberLimit?: boolean;
 }
 
-interface VIPTier {
+export interface VIPTier {
     _id: string;
     name: string;
     role?: VIPRole;
-    enabled?: boolean;
-    vipRoleId?: string;
-    defaultMaxReactions?: number;
+    enabled: boolean;
+    vipRoleId: string;
+    reactions?: VIPReactions;
 }
 
 export interface GuildI {
@@ -40,6 +45,11 @@ const roleAutomationSchema = new Schema<RoleAutomation>({
     triggerRoleIds: { required: true, type: [String] }
 }, { _id: false, versionKey: false });
 
+const vipReactionsSchema = new Schema<VIPReactions>({
+    defaultTriggerLimit: { required: false, type: Number },
+    defaultReactionLimit: { required: false, type: Number }
+}, { _id: false, versionKey: false });
+
 const vipRoleSchema = new Schema<VIPRole>({
     enabled: { required: false, type: Boolean },
     canBeHoisted: { required: false, type: Boolean },
@@ -49,11 +59,11 @@ const vipRoleSchema = new Schema<VIPRole>({
 
 const vipTierSchema = new Schema<VIPTier>({
     _id: { required: true, type: String, default: () => randomId(8) },
+    vipRoleId: { required: true, type: String },
     name: { required: true, type: String },
-    enabled: { required: false, type: Boolean },
-    vipRoleId: { required: false, type: String },
-    defaultMaxReactions: { required: false, type: Number },
-    role: { required: false, type: vipRoleSchema }
+    enabled: { required: true, type: Boolean, default: true },
+    role: { required: false, type: vipRoleSchema },
+    reactions: { required: false, type: vipReactionsSchema }
 }, { _id: false, versionKey: false });
 
 const guildSchema = new Schema<GuildI>({

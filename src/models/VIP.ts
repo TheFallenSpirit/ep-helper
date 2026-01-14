@@ -13,6 +13,7 @@ interface VIPRole {
 export interface VIPI {
     _id: string;
     userId: string;
+    tierId: string;
     role?: VIPRole;
     guildId: string;
     reactions?: string[];
@@ -32,6 +33,7 @@ const vipSchema = new Schema<VIPI>({
     _id: { required: true, type: String, default: () => randomId(16) },
     userId: { required: true, type: String },
     guildId: { required: true, type: String },
+    tierId: { required: true, type: String },
     reactions: { required: false, type: [String] },
     role: { required: false, type: vipRoleSchema },
     maxReactionsModifier: { required: false, type: Number }
