@@ -1,7 +1,7 @@
 import { s, truncateString } from '@fallencodes/seyfert-utils';
 import { ComponentCommand, ComponentContext, Middlewares } from 'seyfert';
 import { APISelectMenuOption, MessageFlags, TextInputStyle } from 'seyfert/lib/types/index.js';
-import createModal, { createModalStringSelectMenu, createModalTextInput } from '../../../structures/modal.js';
+import { createModal, createModalStringSelectMenu, createModalTextInput } from '@fallencodes/seyfert-utils/components/modal';
 
 @Middlewares(['userLock', 'guildConfig', 'vipProfile'])
 export default class extends ComponentCommand {

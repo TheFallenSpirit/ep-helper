@@ -1,9 +1,9 @@
-import { createContainer, createSeparator, createTextDisplay, s } from '@fallencodes/seyfert-utils';
+import { s } from '@fallencodes/seyfert-utils';
 import { Button, CommandContext, ContainerBuilderComponents, Declare, Guild, GuildRole, SubCommand, TopLevelBuilders } from 'seyfert';
 import { ButtonStyle, MessageFlags } from 'seyfert/lib/types/index.js';
 import { updateVipProfile } from '../../../store.js';
-import { createActionRow, createButton } from '../../../structures/components.js';
 import { VIPI } from '../../../models/VIP.js';
+import { createTextDisplay, createSeparator, createContainer, createActionRow, createButton } from '@fallencodes/seyfert-utils/components/message';
 
 @Declare({
     name: 'info',

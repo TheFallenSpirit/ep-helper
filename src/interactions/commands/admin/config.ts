@@ -1,6 +1,7 @@
 import { Command, CommandContext, Declare, Middlewares } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
-import { createContainer, createSeparator, createTextDisplay, s } from '@fallencodes/seyfert-utils';
+import { s } from '@fallencodes/seyfert-utils';
+import { createContainer, createTextDisplay, createSeparator } from '@fallencodes/seyfert-utils/components/message';
 
 @Declare({
     name: 'config',

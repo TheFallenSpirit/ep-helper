@@ -1,7 +1,8 @@
 import { CommandContext, Declare, SubCommand } from 'seyfert';
 import { capitalCase } from 'change-case';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
-import { createTextDisplay, createSeparator, createContainer, s } from '@fallencodes/seyfert-utils';
+import { s } from '@fallencodes/seyfert-utils';
+import { createTextDisplay, createSeparator, createContainer } from '@fallencodes/seyfert-utils/components/message';
 
 @Declare({
     name: 'list',
