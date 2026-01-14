@@ -10,15 +10,27 @@ interface VIPRole {
     maxSlotsModifier?: number;
 }
 
+interface VIPReaction {
+    items?: string[];
+    triggers?: string[];
+}
+
 export interface VIPI {
     _id: string;
     userId: string;
     tierId: string;
     role?: VIPRole;
     guildId: string;
-    reactions?: string[];
+    // triggers?: string[];
+    // reactions?: string[];
+    reaction?: VIPReaction;
     maxReactionsModifier?: number;
 }
+
+const vipReactionSchema = new Schema<VIPReaction>({
+    items: { required: false, type: [String] },
+    triggers: { required: false, type: [String] }
+}, { _id: false, versionKey: false });
 
 const vipRoleSchema = new Schema<VIPRole>({
     id: { required: true, type: String },
@@ -34,7 +46,9 @@ const vipSchema = new Schema<VIPI>({
     userId: { required: true, type: String },
     guildId: { required: true, type: String },
     tierId: { required: true, type: String },
-    reactions: { required: false, type: [String] },
+    // triggers: { required: false, type: [String] },
+    // reactions: { required: false, type: [String] },
+    reaction: { required: false, type: vipReactionSchema },
     role: { required: false, type: vipRoleSchema },
     maxReactionsModifier: { required: false, type: Number }
 }, { _id: false, versionKey: false, timestamps: true });

@@ -1,5 +1,5 @@
 import { AutoLoad, Command, Declare, Middlewares } from 'seyfert';
-import VIPRole from './role.js';
+import VIPInfo from './info.js';
 
 @Declare({
     name: 'vip',
@@ -12,5 +12,5 @@ import VIPRole from './role.js';
 @Middlewares(['guildConfig', 'vipProfile'])
 
 export default class extends Command {
-    run = new VIPRole().run;
+    run = new VIPInfo().run;
 };
