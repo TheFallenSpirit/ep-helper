@@ -2,20 +2,18 @@ import { CommandContext, createStringOption, Declare, Group, Options, SubCommand
 import { updateVipProfile } from '../../../../store.js';
 
 const options = {
-    trigger: createStringOption({
+    emoji: createStringOption({
         required: true,
-        description: 'A word or phrase to remove from your auto reaction triggers.',
-        min_length: 3,
-        max_length: 32
+        description: 'A unicode or custom emoji from this server to remove from your reactions.'
     })
 };
 
 @Declare({
     name: 'remove',
-    description: 'Remove a trigger from your VIP auto reaction triggers.'
+    description: 'Remove a reaction from your VIP auto reactions.'
 })
 
-@Group('triggers')
+@Group('reactions')
 @Options(options)
 
 export default class extends SubCommand {
@@ -24,14 +22,14 @@ export default class extends SubCommand {
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
         if (!vipTier) return context.replyWith(context, 'invalidVipTier', { id: vipProfile.tierId });
 
-        const trigger = context.options.trigger.trim();
+        const emoji = context.options.emoji.trim();
         if (context.interaction) await context.deferReply(true);
 
-        if (!vipProfile.reaction?.triggers?.includes(trigger)) return context.editOrReply({
-            content: `Hold up! | The trigger "${trigger}" isn't one of your triggers.`
+        if (!vipProfile.reaction?.items?.includes(emoji)) return context.editOrReply({
+            content: `Hold up! | The emoji "${emoji}" isn't one of your auto reactions.`
         });
 
-        await updateVipProfile(context.guildId!, context.author.id, { $pull: { 'reaction.triggers': trigger } });
-        await context.editOrReply({ content: `Successfully removed "${trigger}" from your auto reaction triggers.` });
+        await updateVipProfile(context.guildId!, context.author.id, { $pull: { 'reaction.items': emoji } });
+        await context.editOrReply({ content: `Successfully removed "${emoji}" from your auto reactions.` });
     };
 };

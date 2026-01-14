@@ -6,7 +6,7 @@ import VIP from '../../../../models/VIP.js';
 const options = {
     trigger: createStringOption({
         required: true,
-        description: 'The new trigger to add.',
+        description: 'A word or phrase to add to your auto reaction triggers.',
         min_length: 3,
         max_length: 32
     })
