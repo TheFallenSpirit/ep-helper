@@ -19,8 +19,8 @@ export default class extends ComponentCommand {
         const vipRole = vipRoleRequest.role;
         const vipProfile = vipRoleRequest.profile;
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
+        
         const isDisabledText = ' This feature is disabled by the server.';
-
         let hoistedDescription = 'If your VIP role should be shown on the member list.';
         let mentionableDescription = 'If your VIP role should be mentionable by all members.';
 

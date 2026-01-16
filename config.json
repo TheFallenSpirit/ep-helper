@@ -1,6 +1,6 @@
 {
     "$schema": "./config.schema.json",
-    "whitelisted-guilds": ["1446386358812803095", "1370922624397606952"],
+    "whitelisted-guilds": ["1446386358812803095", "1370922624397606952", "1222281807022657546"],
     "status": {
         "change-interval": 120,
         "statuses": [

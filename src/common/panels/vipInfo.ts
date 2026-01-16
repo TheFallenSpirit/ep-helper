@@ -4,6 +4,7 @@ import { ButtonStyle, MessageFlags } from 'seyfert/lib/types/index.js';
 import { setCachedAutoReaction, updateVipProfile } from '../../store.js';
 import { s } from '@fallencodes/seyfert-utils';
 import { ComponentInteractionMessageUpdate } from 'seyfert/lib/common/index.js';
+import { numberToHex } from '../../interactions/buttons/vip/updateColors.js';
 
 export type VIPInfoPanelContext =
 | ComponentContext<'Button' | 'StringSelect', 'vipProfile' | 'guildConfig'>
@@ -61,6 +62,7 @@ export default async (context: VIPInfoPanelContext): Promise<ComponentInteractio
             { $set: { 'role.id': vipRole.id } }
         );
 
+        if (vipRole.colors.primaryColor && vipRole.colors.primaryColor !== 0) color = vipRole.colors.primaryColor;
         const colors = Object.values(vipRole.colors).filter((color) => typeof color === 'number' && color !== 0) as number[];
         const members = context.client.cache.members?.values(guild.id).filter(({ roles }) => {
             return roles.keys.includes(vipRole!.id);
@@ -69,7 +71,7 @@ export default async (context: VIPInfoPanelContext): Promise<ComponentInteractio
         const lines = [
             `### ${vipRole} - VIP Role\n`,
             `**Name**: ${vipRole.name}\n`,
-            `**Colors**: ${colors.map((color) => `\`#${color.toString(16)}\``).join(', ') || 'None'}\n\n`,
+            `**Colors**: ${colors.map((color) => `\`${numberToHex(color)}\``).join(', ') || 'None'}\n\n`,
             `**Hoisted**: ${vipRole.hoist ? 'Yes' : 'No'}\n`,
             `**Mentionable**: ${vipRole.mentionable ? 'Yes' : 'No'}`,
         ];
@@ -85,7 +87,6 @@ export default async (context: VIPInfoPanelContext): Promise<ComponentInteractio
 
     const reactions = vipProfile.reaction?.items ?? [];
     const triggers = vipProfile.reaction?.triggers ?? [];
-
     const triggerLimit = vipTier.reactions?.defaultTriggerLimit;
     const reactionLimit = vipTier.reactions?.defaultReactionLimit;
 
