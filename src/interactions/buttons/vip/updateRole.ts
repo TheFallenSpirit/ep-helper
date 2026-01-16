@@ -1,7 +1,8 @@
-import { s, truncateString } from '@fallencodes/seyfert-utils';
+import { truncateString } from '@fallencodes/seyfert-utils';
 import { ComponentCommand, ComponentContext, Middlewares } from 'seyfert';
 import { APISelectMenuOption, MessageFlags, TextInputStyle } from 'seyfert/lib/types/index.js';
 import { createModal, createModalStringSelectMenu, createModalTextInput } from '@fallencodes/seyfert-utils/components/modal';
+import { getVipRole } from '../../../common/vip.js';
 
 @Middlewares(['userLock', 'guildConfig', 'vipProfile'])
 export default class extends ComponentCommand {
@@ -9,22 +10,14 @@ export default class extends ComponentCommand {
     componentType = 'Button' as const;
 
     run = async (context: ComponentContext<'Button', 'vipProfile' | 'guildConfig'>) => {
-        const guild = await context.guild();
-        if (!guild) return context.replyWith(context, 'guildUnavailable');
-
-        const vipProfile = context.metadata.vipProfile;
-        if (!vipProfile.role?.id) return context.editOrReply({
+        const vipRoleRequest = await getVipRole(context);
+        if (vipRoleRequest.error) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
-            content: `Hold up! | You don't have a VIP role in ${s(guild.name)}.`
+            content: vipRoleRequest.message
         });
 
-        const vipRole = await context.client.roles.fetch(guild.id, vipProfile.role.id).catch(() => {});
-
-        if (!vipRole) return context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            content: `Hold up! | Your VIP role couldn't be found, please use \`/vip role\`.`
-        });
-
+        const vipRole = vipRoleRequest.role;
+        const vipProfile = vipRoleRequest.profile;
         const vipTier = context.metadata.guildConfig.vipTiers?.get(vipProfile.tierId);
         const isDisabledText = ' This feature is disabled by the server.';
 
@@ -68,7 +61,7 @@ export default class extends ComponentCommand {
                     minValues: 1,
                     maxValues: 1,
                     required: false,
-                    customId: 'hoisted',
+                    customId: 'hoist',
                     options: hoistedOptions,
                     description: hoistedDescription
                 }),
