@@ -1,7 +1,7 @@
 import { Redis } from 'ioredis';
 import Guild, { GuildI } from './models/Guild.js';
 import { UpdateQuery } from 'mongoose';
-import VIP, { VIPI } from './models/VIP.js';
+import VIP, { VIPProfileI } from './models/VIPProfile.js';
 import { replacer, reviver } from '@fallencodes/seyfert-utils';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
@@ -27,9 +27,9 @@ export async function updateGuild(guildId: string, query: UpdateQuery<GuildI>): 
     return guildConfigObject;
 };
 
-export async function getVipProfile(guildId: string, userId: string): Promise<VIPI | undefined> {
+export async function getVipProfile(guildId: string, userId: string): Promise<VIPProfileI | undefined> {
     const rawVipProfile = await redis.get(`ep_vip_profile:${guildId}:${userId}`);
-    if (rawVipProfile) return JSON.parse(rawVipProfile) as VIPI;
+    if (rawVipProfile) return JSON.parse(rawVipProfile) as VIPProfileI;
 
     const dbVipProfile = await VIP.findOne({ guildId, userId });
     if (!dbVipProfile) return;
@@ -39,7 +39,7 @@ export async function getVipProfile(guildId: string, userId: string): Promise<VI
     return vipProfileObject;
 };
 
-export async function updateVipProfile(guildId: string, userId: string, query: UpdateQuery<VIPI>): Promise<VIPI> {
+export async function updateVipProfile(guildId: string, userId: string, query: UpdateQuery<VIPProfileI>): Promise<VIPProfileI> {
     const vipProfile = await VIP.findOneAndUpdate({ guildId, userId }, query, { new: true });
     if (!vipProfile) throw new Error(`The specified VIP profile wasn't found -- ${guildId}:${userId}`);
 

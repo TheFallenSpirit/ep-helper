@@ -1,7 +1,7 @@
 import { s } from '@fallencodes/seyfert-utils';
 import { CommandContext, createStringOption, Declare, Group, Options, SubCommand } from 'seyfert';
 import { setCachedAutoReaction, updateVipProfile } from '../../../../store.js';
-import VIP from '../../../../models/VIP.js';
+import VIP from '../../../../models/VIPProfile.js';
 
 const options = {
     trigger: createStringOption({

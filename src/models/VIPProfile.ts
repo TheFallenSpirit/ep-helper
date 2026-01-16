@@ -15,7 +15,7 @@ interface VIPReaction {
     triggers?: string[];
 }
 
-export interface VIPI {
+export interface VIPProfileI {
     _id: string;
     userId: string;
     tierId: string;
@@ -41,7 +41,7 @@ const vipRoleSchema = new Schema<VIPRole>({
     maxSlotsModifier: { required: false, type: Number }
 }, { _id: false, versionKey: false });
 
-const vipSchema = new Schema<VIPI>({
+const vipProfileSchema = new Schema<VIPProfileI>({
     _id: { required: true, type: String, default: () => randomId(16) },
     userId: { required: true, type: String },
     guildId: { required: true, type: String },
@@ -53,4 +53,4 @@ const vipSchema = new Schema<VIPI>({
     maxReactionsModifier: { required: false, type: Number }
 }, { _id: false, versionKey: false, timestamps: true });
 
-export default model('vip-profiles', vipSchema);
+export default model('vip-profiles', vipProfileSchema);

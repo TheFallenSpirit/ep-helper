@@ -4,7 +4,7 @@ import config from '../../config.json' with { type: 'json' };
 import { getGuild, getVipProfile, redis, updateVipProfile } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import { s } from '@fallencodes/seyfert-utils';
-import VIP, { VIPI } from '../models/VIP.js';
+import VIP, { VIPProfileI } from '../models/VIPProfile.js';
 
 const userLock = createMiddleware<void>(async ({ next, context }) => {
     if (!('customId' in context)) return next();
@@ -25,7 +25,7 @@ const guildConfig = createMiddleware<GuildI>(async ({ next, context }) => {
     next(guildConfig);
 });
 
-const vipProfile = createMiddleware<VIPI>(async ({ next, context }) => {
+const vipProfile = createMiddleware<VIPProfileI>(async ({ next, context }) => {
     const guild = await context.guild();
     if (!guild) return;
 
