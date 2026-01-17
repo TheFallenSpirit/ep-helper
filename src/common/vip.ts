@@ -2,6 +2,9 @@ import { VIPInfoPanelContext } from './panels/vipInfo.js';
 import { s } from '@fallencodes/seyfert-utils';
 import { GuildRole } from 'seyfert';
 import { VIPProfileI } from '../models/VIPProfile.js';
+import { VIPTier } from '../models/Guild.js';
+import { APIRoleColors } from 'seyfert/lib/types/index.js';
+import { ObjectToLower } from 'seyfert/lib/common/index.js';
 
 type VIPRoleResponse = 
 | ({ error: true, message: string })
@@ -28,4 +31,22 @@ export async function getVipRole(context: VIPInfoPanelContext): Promise<VIPRoleR
     });
 
     return ({ error: false, role: vipRole, profile: vipProfile });
+};
+
+export function getVipRoleMemberLimit(vipProfile: VIPProfileI, vipTier: VIPTier) {
+    let memberLimit = vipTier.role?.defaultMemberLimit ?? 10;
+    if (vipProfile.role?.maxMembersModifier) memberLimit += vipProfile.role.maxMembersModifier;
+    return memberLimit;
+};
+
+export function apiRoleColorsToArray(apiColors: APIRoleColors | ObjectToLower<APIRoleColors>): number[] {
+    const primaryColor = 'primaryColor' in apiColors ? apiColors.primaryColor : apiColors.primary_color;
+    const secondaryColor = 'secondaryColor' in apiColors ? apiColors.secondaryColor : apiColors.secondary_color;
+    const tertiaryColor = 'tertiaryColor' in apiColors ? apiColors.tertiaryColor : apiColors.tertiary_color;
+
+    const colors: number[] = [];
+    if (primaryColor !== 0) colors.push(primaryColor);
+    if (secondaryColor) colors.push(secondaryColor);
+    if (tertiaryColor) colors.push(tertiaryColor);
+    return colors;
 };

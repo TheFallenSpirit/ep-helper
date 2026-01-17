@@ -1,10 +1,11 @@
-import { createActionRow, createButton, createContainer, createSeparator, createTextDisplay } from '@fallencodes/seyfert-utils/components/message';
+import { createActionRow, createButton, createContainer, createSeparator, createTextDisplay, createTextSection } from '@fallencodes/seyfert-utils/components/message';
 import { Button, CommandContext, ComponentContext, ContainerBuilderComponents, GuildRole, ModalContext, TopLevelBuilders } from 'seyfert';
 import { ButtonStyle, MessageFlags } from 'seyfert/lib/types/index.js';
 import { setCachedAutoReaction, updateVipProfile } from '../../store.js';
 import { s } from '@fallencodes/seyfert-utils';
 import { ComponentInteractionMessageUpdate } from 'seyfert/lib/common/index.js';
 import { numberToHex } from '../../interactions/buttons/vip/updateColors.js';
+import { apiRoleColorsToArray, getVipRoleMemberLimit } from '../vip.js';
 
 export type VIPInfoPanelContext =
 | ComponentContext<'Button' | 'StringSelect', 'vipProfile' | 'guildConfig'>
@@ -62,27 +63,52 @@ export default async (context: VIPInfoPanelContext): Promise<ComponentInteractio
             { $set: { 'role.id': vipRole.id } }
         );
 
-        if (vipRole.colors.primaryColor && vipRole.colors.primaryColor !== 0) color = vipRole.colors.primaryColor;
-        const colors = Object.values(vipRole.colors).filter((color) => typeof color === 'number' && color !== 0) as number[];
-        const members = context.client.cache.members?.values(guild.id).filter(({ roles }) => {
+        const colors = apiRoleColorsToArray(vipRole.colors);
+        if (colors[0] !== 0) color = colors[0];
+
+        const memberLimit = getVipRoleMemberLimit(vipProfile, vipTier);
+        const members = (context.client.cache.members?.values(guild.id).filter(({ roles }) => {
             return roles.keys.includes(vipRole!.id);
-        }) ?? [];
+        }) ?? []).map(({ id }) => id);
+
+        if (!members.includes(context.author.id)) try {
+            await context.client.proxy.guilds(guild.id).members(context.author.id).roles(vipRole.id).put({
+                reason: 'Automated Action: User not member of their VIP role.'
+            });
+
+            members.push(context.author.id);
+        } catch (_error) {
+            return ({
+                content: `Error! | I failed to add you to your VIP role, please contact server admins.`
+            });
+        };
 
         const lines = [
-            `### ${vipRole} - VIP Role\n`,
+            `### VIP Role • ${vipRole}\n`,
             `**Name**: ${vipRole.name}\n`,
             `**Colors**: ${colors.map((color) => `\`${numberToHex(color)}\``).join(', ') || 'None'}\n\n`,
             `**Hoisted**: ${vipRole.hoist ? 'Yes' : 'No'}\n`,
             `**Mentionable**: ${vipRole.mentionable ? 'Yes' : 'No'}`,
         ];
 
+        const memberLines = [
+            `### Role Members (${members.length}/${memberLimit})\n`,
+            members.map((id) => `<@${id}>`).join(', ') || 'None'
+        ];
+
+        let vipRoleInfoComponent: ContainerBuilderComponents = createTextDisplay(lines.join(''));
+        if (vipRole.icon) vipRoleInfoComponent = createTextSection(lines.join(''), {
+            type: 'thumbnail',
+            url: `https://cdn.discordapp.com/role-icons/${vipRole.id}/${vipRole.icon}.png`
+        });
+
         containerComponents.push(
-            createTextDisplay(lines.join('')),
+            vipRoleInfoComponent,
             createSeparator(),
-            createTextDisplay(`### Role Members\n${members.map(({ id }) => `<@${id}>`).join(', ') || 'None'}`)
+            createTextDisplay(memberLines.join(''))
         );
     } else containerComponents.push(
-        createTextDisplay(`### VIP Role\nYour VIP tier ${s(vipTier.name)} doesn't have an included VIP role.`)
+        createTextDisplay(`### VIP Role\nYour VIP tier "${s(vipTier.name)}" doesn't have an included VIP role.`)
     );
 
     const reactions = vipProfile.reaction?.items ?? [];
@@ -92,7 +118,7 @@ export default async (context: VIPInfoPanelContext): Promise<ComponentInteractio
 
     const reactionLines = [`### Auto Reactions\n`];
     if (!triggerLimit || !reactionLimit) {
-        reactionLines.push(`Your VIP tier ${s(vipTier.name)} doesn't have any included auto reactions.`);
+        reactionLines.push(`Your VIP tier "${s(vipTier.name)}" doesn't have any included auto reactions.`);
     } else {
         await setCachedAutoReaction(guild.id, { roleId, userId: context.author.id, triggers, items: reactions });
 

@@ -17,7 +17,7 @@ interface VIPRole {
     enabled?: boolean;
     canBeHoisted?: boolean;
     canBeMentionable?: boolean;
-    defaultMemberLimit?: boolean;
+    defaultMemberLimit?: number;
 }
 
 export interface VIPTier {

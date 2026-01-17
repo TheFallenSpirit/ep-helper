@@ -1,5 +1,5 @@
 import { truncateString } from '@fallencodes/seyfert-utils';
-import { ComponentCommand, ComponentContext, Middlewares } from 'seyfert';
+import { ComponentCommand, ComponentContext, Label, Middlewares } from 'seyfert';
 import { APISelectMenuOption, MessageFlags, TextInputStyle } from 'seyfert/lib/types/index.js';
 import { createModal, createModalStringSelectMenu, createModalTextInput } from '@fallencodes/seyfert-utils/components/modal';
 import { getVipRole } from '../../../common/vip.js';
@@ -10,6 +10,9 @@ export default class extends ComponentCommand {
     componentType = 'Button' as const;
 
     run = async (context: ComponentContext<'Button', 'vipProfile' | 'guildConfig'>) => {
+        const guild = await context.guild();
+        if (!guild) return context.replyWith(context, 'guildUnavailable');
+
         const vipRoleRequest = await getVipRole(context);
         if (vipRoleRequest.error) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -44,37 +47,43 @@ export default class extends ComponentCommand {
             mentionableOptions = [{ label: vipRole.mentionable ? 'Yes' : 'No', value: 'false', default: true }];
         };
 
+        const modalComponents: Label[] = [
+            createModalTextInput({
+                label: 'Name',
+                value: vipRole.name,
+                style: TextInputStyle.Short,
+                customId: 'name',
+                maxLength: 32,
+                description: 'The name of your VIP role.'
+            }),
+            createModalStringSelectMenu({
+                label: 'Hoisted',
+                minValues: 1,
+                maxValues: 1,
+                required: false,
+                customId: 'hoist',
+                options: hoistedOptions,
+                description: hoistedDescription
+            }),
+            createModalStringSelectMenu({
+                label: 'Mentionable',
+                minValues: 1,
+                maxValues: 1,
+                required: false,
+                customId: 'mentionable',
+                options: mentionableOptions,
+                description: mentionableDescription
+            })
+        ];
+
+        // if (guild.features.includes(GuildFeature.RoleIcons)) modalComponents.push(createModalFile({
+
+        // }));
+
         const modal = createModal({
             title: truncateString(`Update ${vipRole.name}`, 45),
             customId: 'modal.vip.role.update',
-            components: [
-                createModalTextInput({
-                    label: 'Name',
-                    value: vipRole.name,
-                    style: TextInputStyle.Short,
-                    customId: 'name',
-                    maxLength: 32,
-                    description: 'The name of your VIP role.'
-                }),
-                createModalStringSelectMenu({
-                    label: 'Hoisted',
-                    minValues: 1,
-                    maxValues: 1,
-                    required: false,
-                    customId: 'hoist',
-                    options: hoistedOptions,
-                    description: hoistedDescription
-                }),
-                createModalStringSelectMenu({
-                    label: 'Mentionable',
-                    minValues: 1,
-                    maxValues: 1,
-                    required: false,
-                    customId: 'mentionable',
-                    options: mentionableOptions,
-                    description: mentionableDescription
-                })
-            ]
+            components: modalComponents
         });
 
         await context.modal(modal);

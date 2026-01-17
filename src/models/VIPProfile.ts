@@ -7,7 +7,7 @@ interface VIPRole {
     colors?: number[];
     members?: string[];
     encodedIcon?: string;
-    maxSlotsModifier?: number;
+    maxMembersModifier?: number;
 }
 
 interface VIPReaction {
@@ -38,7 +38,7 @@ const vipRoleSchema = new Schema<VIPRole>({
     colors: { required: false, type: [Number] },
     members: { required: false, type: [String] },
     encodedIcon: { required: false, type: String },
-    maxSlotsModifier: { required: false, type: Number }
+    maxMembersModifier: { required: false, type: Number }
 }, { _id: false, versionKey: false });
 
 const vipProfileSchema = new Schema<VIPProfileI>({
