@@ -2,8 +2,12 @@ import { Redis } from 'ioredis';
 import Guild, { GuildI } from './models/Guild.js';
 import { UpdateQuery } from 'mongoose';
 import { replacer, reviver } from '@fallencodes/seyfert-utils';
+import { JSONFileSyncPreset } from 'lowdb/node';
+import { AppConfigI } from './module.js';
+import defaultConfig from './common/defaultConfig.js';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
+export const config = JSONFileSyncPreset<AppConfigI>('appConfig.json', defaultConfig);
 
 export async function getGuild(guildId: string): Promise<GuildI> {
     const rawGuildConfig = await redis.get(`ep_guild:${guildId}`);

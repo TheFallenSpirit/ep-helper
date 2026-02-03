@@ -3,7 +3,7 @@ import { config } from "seyfert";
 export default config.bot({
     token: process.env.DISCORD_TOKEN ?? '',
     locations: {
-        base: 'build/src',
+        base: 'build',
         events: 'events',
         components: 'interactions',
         commands: 'interactions/commands'

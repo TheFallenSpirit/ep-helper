@@ -10,3 +10,4 @@ node_modules/
 .env
 build/
 commands.json
+appConfig.json

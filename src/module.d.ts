@@ -1,6 +1,7 @@
 import { AnyContext, Client, ParseClient, ParseMiddlewares } from "seyfert";
 import middlewares from './common/middlewares.ts';
 import { LangKey, LangProps } from './common/lang.ts';
+import { PresenceUpdateStatus } from 'seyfert/lib/types/index.js';
 
 declare module 'seyfert' {
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof middlewares> {}
@@ -16,4 +17,18 @@ declare module 'seyfert' {
     interface ExtendContext {
         replyWith: (context: AnyContext, key: LangKey, props?: LangProps) => void;
     }
+};
+
+export interface StatusI {
+    status: Omit<PresenceUpdateStatus, 'offline'>;
+    message: string;
+}
+
+export interface AppConfigI {
+    internalAdminIds: string[];
+    whitelistedGuilds: string[];
+    status: {
+        statuses: StatusI[];
+        changeInterval: number;
+    };
 };

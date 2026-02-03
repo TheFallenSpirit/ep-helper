@@ -1,13 +1,17 @@
+import { config } from '@/store.js';
 import { CronOnCompleteCallback } from 'cron';
 import { UsingClient } from 'seyfert';
-import config from '../../config.json' with { type: 'json' };
 
 export default async (client: UsingClient, done: CronOnCompleteCallback) => {
+    config.read();
+    
     const guildList = client.cache.guilds?.values() ?? [];
+    const whitelistedGuilds = config.data.whitelistedGuilds;
+    if (whitelistedGuilds.length < 1) return done();
 
     for await (const guild of guildList) {
-        if (config['whitelisted-guilds'].includes(guild.id)) continue;
-        client.logger.debug(`Leaving guild ${guild.name} [${guild.id}].`);
+        if (whitelistedGuilds.includes(guild.id)) continue;
+        client.logger.debug(`[GUILD CHECK] Leaving guild ${guild.name} [${guild.id}].`);
         await guild.leave();
     };
 
