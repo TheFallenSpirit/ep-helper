@@ -1,4 +1,4 @@
-import { config } from '@/store.js';
+import { updateAppConfig } from '@/store.js';
 import { CommandContext, createUserOption, Declare, Middlewares, Options, SubCommand } from 'seyfert';
 
 const options = {
@@ -21,13 +21,15 @@ export default class extends SubCommand {
         const user = context.options.user;
         const username = context.client.me.username;
 
-        if (!config.data.internalAdminIds.includes(user.id)) return context.editOrReply({
+        if (!context.client.config.internalAdminIds.includes(user.id)) return context.editOrReply({
             content: `${user} isn't a member of ${username}'s internal admins.`,
             allowed_mentions: { parse: [] }
         });
 
-        config.data.internalAdminIds = config.data.internalAdminIds.filter((id) => id !== user.id);
-        config.write();
+        await updateAppConfig(
+            context.client,
+            { $pull: { internalAdminIds: user.id } }
+        );
 
         await context.editOrReply({
             content: `Removed ${user} from ${username}'s internal admins.`,

@@ -1,4 +1,3 @@
-import { config } from '@/store.js';
 import { s } from '@fallencodes/seyfert-utils';
 import { createContainer, createTextDisplay } from '@fallencodes/seyfert-utils/components/message';
 import { CommandContext, Declare, SubCommand } from 'seyfert';
@@ -11,25 +10,25 @@ import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 export default class extends SubCommand {
     run = async (context: CommandContext) => {
-        if (config.data.whitelistedGuildIds.length < 1) return context.editOrReply({
+        const whitelistedGuildIds = context.client.config.whitelistedGuildIds ?? [];
+
+        if (whitelistedGuildIds.length < 1) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             content: 'There are no whitelisted servers, whitelisted servers is disabled.'
         });
 
-        const whitelistedServers: string[] = [];
-        for (const guildId of config.data.whitelistedGuildIds) {
-            const guild = context.client.cache.guilds?.get(guildId);
-            whitelistedServers.push(guild ? `${s(guild.name)} [\`${guild.id}\`]` : `\`${guildId}\``)
-        };
-
         const lines = [
-            `### Whitelisted Servers - ${context.client.me.username}\n`,
-            whitelistedServers.map((server) => `- ${server}`).join('\n')
+            `### Whitelisted Servers - ${context.client.me.username}`
         ];
+
+        for (const guildId of whitelistedGuildIds) {
+            const guild = context.client.cache.guilds?.get(guildId);
+            lines.push(`- ${guild ? `${s(guild.name)} [\`${guild.id}\`]` : `\`${guildId}\``}`);
+        };
 
         await context.editOrReply({
             flags: MessageFlags.IsComponentsV2,
-            components: [createContainer([createTextDisplay(lines.join(''))])]
+            components: [createContainer([createTextDisplay(lines.join('\n'))])]
         });
     };
 };

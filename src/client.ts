@@ -1,8 +1,12 @@
 import { basename } from 'path';
 import { Client, ClientOptions } from 'seyfert';
 import lang, { LangKey, LangProps } from './common/lang.js';
+import defaultConfig from './common/defaultConfig.js';
+import { AppConfigI } from './models/AppConfig.js';
 
 export default class EPClient extends Client {
+    config: AppConfigI = defaultConfig;
+
     constructor(options?: ClientOptions) {
         super(options);
         this.events.filter = (path) => !basename(path).startsWith('_');

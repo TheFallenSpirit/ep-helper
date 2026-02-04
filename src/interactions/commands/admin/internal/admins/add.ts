@@ -1,4 +1,4 @@
-import { config } from '@/store.js';
+import { updateAppConfig } from '@/store.js';
 import { CommandContext, createUserOption, Declare, Options, SubCommand } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 
@@ -17,7 +17,7 @@ const options = {
 @Options(options)
 export default class extends SubCommand {
     run = async (context: CommandContext<typeof options>) => {
-        const internalAdmins = config.data.internalAdminIds;
+        const internalAdmins = context.client.config.internalAdminIds;
 
         if (internalAdmins.length > 0 && !internalAdmins.includes(context.author.id)) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -32,8 +32,10 @@ export default class extends SubCommand {
             allowed_mentions: { parse: [] }
         });
 
-        config.data.internalAdminIds.push(user.id);
-        config.write();
+        await updateAppConfig(
+            context.client,
+            { $addToSet: { internalAdminIds: user.id } }
+        );
 
         await context.editOrReply({
             content: `Added ${user} to ${username}'s internal admins.`,

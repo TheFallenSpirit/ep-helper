@@ -1,4 +1,3 @@
-import { config } from '@/store.js';
 import { name } from '@fallencodes/seyfert-utils';
 import { createContainer, createTextDisplay } from '@fallencodes/seyfert-utils/components/message';
 import { CommandContext, Declare, Middlewares, SubCommand, User } from 'seyfert';
@@ -14,7 +13,7 @@ export default class extends SubCommand {
     run = async (context: CommandContext) => {
         const internalAdmins: User[] = [];
 
-        for await (const userId of config.data.internalAdminIds) {
+        for await (const userId of context.client.config.internalAdminIds) {
             const user = await context.client.users.fetch(userId);
             internalAdmins.push(user);
         };

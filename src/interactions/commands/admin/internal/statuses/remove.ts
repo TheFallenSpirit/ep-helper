@@ -1,13 +1,11 @@
 import { CommandContext, createNumberOption, Declare, Options, SubCommand } from 'seyfert';
-import { statusAutocomplete } from './statuses.js';
-import { config } from '@/store.js';
+import { updateAppConfig } from '@/store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 const options = {
     status: createNumberOption({
         required: true,
-        description: 'The custom status to remove.',
-        autocomplete: statusAutocomplete
+        description: 'The custom status to remove.'
     })
 };
 
@@ -20,7 +18,7 @@ const options = {
 export default class extends SubCommand {
     run = async (context: CommandContext<typeof options>) => {
         const index = context.options.status - 1;
-        const status = config.data.status.statuses[index];
+        const status = context.client.config.status?.items?.[index];
 
         if (!status) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
@@ -28,8 +26,7 @@ export default class extends SubCommand {
         });
 
         const username = context.client.me.username;
-        config.data.status.statuses = config.data.status.statuses.filter((_status, i) => i !== index);
-        config.write();
+        await updateAppConfig(context.client, { $pull: { 'status.items': status } });
 
         await context.editOrReply({
             content: `Removed custom status (${status.status}) "${status.message}" from ${username}'s statuses.`

@@ -1,12 +1,12 @@
-import { AppConfigI } from '@/module.js';
+import { AppConfigI } from '@/models/AppConfig.js';
 import { PresenceUpdateStatus } from 'seyfert/lib/types/index.js';
 
 const defaultConfig: AppConfigI = {
+    _id: '',
+    appId: '',
     internalAdminIds: [],
-    whitelistedGuildIds: [],
     status: {
-        changeInterval: 120,
-        statuses: [{ status: PresenceUpdateStatus.Online, message: 'Being super helpful; Change me' }]
+        items: [{ status: PresenceUpdateStatus.Online, message: 'Being super helpful; Change me' }],
     }
 };
 

@@ -1,6 +1,6 @@
 import { createMiddleware } from 'seyfert';
 import { GuildI } from '../models/Guild.js';
-import { config, getGuild } from '../store.js';
+import { getGuild } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import { s } from '@fallencodes/seyfert-utils';
 
@@ -14,7 +14,7 @@ const userLock = createMiddleware<void>(async ({ next, context }) => {
 });
 
 const guildConfig = createMiddleware<GuildI>(async ({ next, context }) => {
-    const whitelistedGuilds = config.data.whitelistedGuildIds;
+    const whitelistedGuilds = context.client.config.whitelistedGuildIds ?? [];
 
     if (whitelistedGuilds.length > 0 && !whitelistedGuilds.includes(context.guildId!)) return context.editOrReply({
         flags: MessageFlags.Ephemeral,
@@ -26,7 +26,7 @@ const guildConfig = createMiddleware<GuildI>(async ({ next, context }) => {
 });
 
 const internalAccess = createMiddleware<void>(async ({ next, context }) => {
-    const internalAdminIds = config.data.internalAdminIds;
+    const internalAdminIds = context.client.config.internalAdminIds;
 
     if (internalAdminIds.length < 1) return context.editOrReply({
         flags: MessageFlags.Ephemeral,

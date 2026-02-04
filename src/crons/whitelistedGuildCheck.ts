@@ -1,12 +1,9 @@
-import { config } from '@/store.js';
 import { CronOnCompleteCallback } from 'cron';
 import { UsingClient } from 'seyfert';
 
 export default async (client: UsingClient, done: CronOnCompleteCallback) => {
-    config.read();
-    
     const guildList = client.cache.guilds?.values() ?? [];
-    const whitelistedGuilds = config.data.whitelistedGuildIds;
+    const whitelistedGuilds = client.config.whitelistedGuildIds ?? [];
     if (whitelistedGuilds.length < 1) return done();
 
     for await (const guild of guildList) {

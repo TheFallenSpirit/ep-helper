@@ -1,6 +1,6 @@
+import { updateAppConfig } from '@/store.js';
 import { snowflakeOptionValue } from '@fallencodes/seyfert-utils/options';
 import { CommandContext, createStringOption, Declare, Options, SubCommand } from 'seyfert';
-import { config } from '@/store.js';
 
 const options = {
     server: createStringOption({
@@ -21,12 +21,14 @@ export default class extends SubCommand {
         const guildId = context.options.server;
         const username = context.client.me.username;
 
-        if (!config.data.whitelistedGuildIds.includes(guildId)) return context.editOrReply({
+        if (!context.client.config.whitelistedGuildIds?.includes(guildId)) return context.editOrReply({
             content: `\`${guildId}\` isn't a member of ${username}'s whitelisted severs.`
         });
 
-        config.data.whitelistedGuildIds = config.data.whitelistedGuildIds.filter((id) => id !== guildId);
-        config.write();
+        await updateAppConfig(
+            context.client,
+            { $pull: { whitelistedGuildIds: guildId } }
+        );
 
         await context.editOrReply({
             content: `Removed \`${guildId}\` from ${username}'s whitelisted servers.`

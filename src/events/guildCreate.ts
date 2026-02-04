@@ -1,10 +1,9 @@
-import { config } from '@/store.js';
 import { createEvent } from 'seyfert';
 
 export default createEvent({
     data: { name: 'guildCreate' },
     run: async (guild, client) => {
-        const whitelistedGuilds = config.data.whitelistedGuildIds;
+        const whitelistedGuilds = client.config.whitelistedGuildIds ?? [];
         if (whitelistedGuilds.length < 1 || whitelistedGuilds.includes(guild.id)) return;
         
         client.logger.debug(

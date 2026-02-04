@@ -1,4 +1,4 @@
-import { config } from '@/store.js';
+import { updateAppConfig } from '@/store.js';
 import { CommandContext, createStringOption, Declare, Options, SubCommand } from 'seyfert';
 
 const options = {
@@ -31,8 +31,10 @@ export default class extends SubCommand {
         const message = context.options.message;
         const username = context.client.me.username;
 
-        config.data.status.statuses.push({ status, message });
-        config.write();
+        await updateAppConfig(
+            context.client,
+            { $push: { 'status.items': { status, message } } }
+        );
 
         await context.editOrReply({
             content: `Added custom status (${status}) "${message}" to ${username}'s statuses.`

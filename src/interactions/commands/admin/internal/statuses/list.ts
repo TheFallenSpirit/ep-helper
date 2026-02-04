@@ -1,4 +1,3 @@
-import { config } from '@/store.js';
 import { createContainer, createTextDisplay } from '@fallencodes/seyfert-utils/components/message';
 import { capitalCase } from 'change-case';
 import { CommandContext, Declare, SubCommand } from 'seyfert';
@@ -11,9 +10,16 @@ import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 export default class extends SubCommand {
     run = async (context: CommandContext) => {
+        const statuses = context.client.config.status?.items ?? [];
+        
+        if (statuses.length < 1) return context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            content: `There are no customs statuses on ${context.client.me.username}.`
+        });
+
         const lines = [
             `### Custom Statuses - ${context.client.me.username}\n`,
-            config.data.status.statuses.map(({ status, message }, index) => {
+            statuses.map(({ status, message }, index) => {
                 return `${index + 1}. [${capitalCase(status.toString())}] ${message}`;
             }).join('\n')
         ];
