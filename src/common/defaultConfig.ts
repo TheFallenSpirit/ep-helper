@@ -3,7 +3,7 @@ import { PresenceUpdateStatus } from 'seyfert/lib/types/index.js';
 
 const defaultConfig: AppConfigI = {
     internalAdminIds: [],
-    whitelistedGuilds: [],
+    whitelistedGuildIds: [],
     status: {
         changeInterval: 120,
         statuses: [{ status: PresenceUpdateStatus.Online, message: 'Being super helpful; Change me' }]

@@ -5,8 +5,11 @@ import { connect } from 'mongoose';
 import defaults, { prefix } from './common/defaults.js';
 import handleCommand from './structures/handleCommand.js';
 import EPClient from './client.js';
+import customizeLogger from '@fallencodes/seyfert-utils/logger';
 
 environmentCheck();
+customizeLogger();
+
 const client = new EPClient({
     context: extendedContext,
     commands: { prefix, defaults, reply: () => true },

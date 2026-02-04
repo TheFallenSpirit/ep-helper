@@ -26,7 +26,7 @@ export interface StatusI {
 
 export interface AppConfigI {
     internalAdminIds: string[];
-    whitelistedGuilds: string[];
+    whitelistedGuildIds: string[];
     status: {
         statuses: StatusI[];
         changeInterval: number;

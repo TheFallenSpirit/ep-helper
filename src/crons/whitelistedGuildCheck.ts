@@ -6,7 +6,7 @@ export default async (client: UsingClient, done: CronOnCompleteCallback) => {
     config.read();
     
     const guildList = client.cache.guilds?.values() ?? [];
-    const whitelistedGuilds = config.data.whitelistedGuilds;
+    const whitelistedGuilds = config.data.whitelistedGuildIds;
     if (whitelistedGuilds.length < 1) return done();
 
     for await (const guild of guildList) {

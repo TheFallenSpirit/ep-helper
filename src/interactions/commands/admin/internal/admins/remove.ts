@@ -21,6 +21,11 @@ export default class extends SubCommand {
         const user = context.options.user;
         const username = context.client.me.username;
 
+        if (!config.data.internalAdminIds.includes(user.id)) return context.editOrReply({
+            content: `${user} isn't a member of ${username}'s internal admins.`,
+            allowed_mentions: { parse: [] }
+        });
+
         config.data.internalAdminIds = config.data.internalAdminIds.filter((id) => id !== user.id);
         config.write();
 

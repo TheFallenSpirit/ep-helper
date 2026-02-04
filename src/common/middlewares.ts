@@ -14,7 +14,7 @@ const userLock = createMiddleware<void>(async ({ next, context }) => {
 });
 
 const guildConfig = createMiddleware<GuildI>(async ({ next, context }) => {
-    const whitelistedGuilds = config.data.whitelistedGuilds;
+    const whitelistedGuilds = config.data.whitelistedGuildIds;
 
     if (whitelistedGuilds.length > 0 && !whitelistedGuilds.includes(context.guildId!)) return context.editOrReply({
         flags: MessageFlags.Ephemeral,

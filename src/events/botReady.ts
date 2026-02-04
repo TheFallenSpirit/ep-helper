@@ -12,7 +12,7 @@ export default createEvent({
         if (config.data.status.statuses.length > 0) handleStatusChange(client);
 
         const currentGuilds = client.cache.guilds?.values();
-        const wlEnabled = config.data.whitelistedGuilds.length > 0;
+        const wlEnabled = config.data.whitelistedGuildIds.length > 0;
 
         if (currentGuilds && currentGuilds.length > 0) client.logger.debug(
             `${user.tag} is in the following servers:`,

@@ -1,32 +1,6 @@
-import { CronJob } from 'cron';
-import dayjs from 'dayjs';
-import { AnyContext, Logger, UsingClient } from 'seyfert';
-import { bgRed, bold, cyan, dim, gray, LogLevels, red, yellow } from 'seyfert/lib/common/index.js';
-import whitelistedGuildCheck from './crons/whitelistedGuildCheck.js';
+import { AnyContext, UsingClient } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import lang, { LangKey, LangProps } from './common/lang.js';
-
-Logger.customize((_, level, args) => {
-    let color = red;
-
-    switch (level) {
-        case LogLevels.Info: color = cyan; break;
-        case LogLevels.Debug: color = dim; break;
-        case LogLevels.Warn: color = yellow; break;
-        case LogLevels.Fatal: color = bgRed; break;
-    };
-
-    return [
-        brackets(gray(dayjs().format('YYYY-MM-DD HH:mm:ss'))),
-        brackets(dim(`RSS: ${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)} MiB`)),
-        brackets(color(Logger.prefixes.get(level) ?? 'UNKNOWN')),
-        ...args
-    ];
-});
-
-function brackets(content: string) {
-    return `${bold(gray('['))}${content}${bold(gray(']'))}`;
-};
 
 export function environmentCheck() {
     const envKeys = ['DISCORD_TOKEN', 'MONGO_URL', 'REDIS_URL'];
@@ -36,13 +10,13 @@ export function environmentCheck() {
     };
 };
 
-export function startCrons(client: UsingClient) {
-    CronJob.from({
-        start: true,
-        cronTime: '0 0 * * *',
-        onTick: (done) => whitelistedGuildCheck(client, done),
-        onComplete: () => client.logger.debug('[CRON] Successfully completed whitelistedGuildCheck job.')
-    });
+export function startCrons(_client: UsingClient) {
+    // CronJob.from({
+    //     start: true,
+    //     cronTime: '0 0 * * *',
+    //     onTick: (done) => whitelistedGuildCheck(client, done),
+    //     onComplete: () => client.logger.debug('[CRON] Successfully completed whitelistedGuildCheck job.')
+    // });
 };
 
 export const extendedContext = (_interaction: any) => ({
