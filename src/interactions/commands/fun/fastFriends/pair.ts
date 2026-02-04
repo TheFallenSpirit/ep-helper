@@ -42,13 +42,13 @@ export default class extends SubCommand {
             content: 'Hold up! You must use this command in a voice or stage channel.'
         });
 
-        const channelId = await redis.get(`ep_ff_active:${context.guildId}`);
+        const channelId = await redis.get(`ep_ff_active:${guild.id}`);
         if (!channelId || channel.id !== channelId) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             content: 'Hold up! You must use this command in the channel you started the session in.'
         });
 
-        const members = await redis.smembers(`ep_ff_members:${context.guildId}`);
+        const members = await redis.smembers(`ep_ff_members:${guild.id}`);
         if (members.length < 2) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             content: 'Hold up! There needs to be at least 2 participants before starting.'
@@ -73,32 +73,48 @@ export default class extends SubCommand {
 
         for await (const pair of pairs) {
             const pairChannel = await guild.channels.create({
+                nsfw: true,
                 type: ChannelType.GuildVoice,
                 name: `FF Pair // Group ${randomId(3)}`,
                 parent_id: context.options.category.id,
                 permission_overwrites: [
                     { id: guild.id, type: OverwriteType.Role, deny: '1114112' },
-                    { id: pair[0], type: OverwriteType.Member, allow: '687198293568' },
-                    { id: pair[0], type: OverwriteType.Member, allow: '687198293568' }
+                    ...pair.map((id) => ({ id, type: OverwriteType.Member, allow: '687198293568' }))
                 ]
             }).catch(() => {});
 
             if (!pairChannel) continue;
-            await guild.members.edit(pair[0], { channel_id: pairChannel.id }).catch(() => {});
-            await guild.members.edit(pair[1], { channel_id: pairChannel.id }).catch(() => {});
+            for await (const id of pair) {
+                await guild.members.edit(
+                    id,
+                    { channel_id: pairChannel.id },
+                    `Automated Action: User paired in group of ${groupSize} for fast friends`
+                ).catch(() => {});
+            };
 
             setTimeout(async () => {
-                await guild.members.edit(pair[0], { channel_id: channelId }).catch(() => {});
-                await guild.members.edit(pair[1], { channel_id: channelId }).catch(() => {});
-                await pairChannel.delete().catch(() => {});
-            }, time * 60);
+                for await (const id of pair) {
+                    await guild.members.edit(
+                        id,
+                        { channel_id: channelId },
+                        `Automated Action: User paired in group of ${groupSize} for fast friends`
+                    ).catch(() => {});
+                };
+
+                await pairChannel.delete('Automated Action: Pairing created for fast friends').catch(() => {});
+            }, time * 60_000);
 
             await wait(2500);
         };
 
         await context.editOrReply({
-            content: `Successfully paired ${members.length} in ${groupCount} groups for ${time} minutes.`
+            content: `Successfully paired ${members.length} participants in ${groupCount} groups for ${time} minutes.`
         });
+
+        await redis.del(
+            `ep_ff_active:${guild.id}`,
+            `ep_ff_members:${guild.id}`
+        );
     };
 };
 

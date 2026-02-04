@@ -30,6 +30,11 @@ export default class extends SubCommand {
         const members: (User | GuildMember)[] = [];
         const memberIds = await redis.smembers(`ep_ff_members:${context.guildId}`);
 
+        if (memberIds.length < 1) return context.editOrReply({
+            flags: MessageFlags.Ephemeral,
+            content: 'There are no members in the fast friends game session.'
+        });
+
         for await (const userId of memberIds) {
             const user = await context.client.users.fetch(userId);
             const member = context.client.cache.members?.get(userId, context.guildId!);
@@ -43,6 +48,7 @@ export default class extends SubCommand {
 
         await context.editOrReply({
             flags: MessageFlags.IsComponentsV2,
+            allowed_mentions: { parse: [] },
             components: [createContainer([createTextDisplay(lines.join(''))])]
         });
     };
