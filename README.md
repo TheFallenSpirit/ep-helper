@@ -6,7 +6,7 @@ EPH (EP Helper) is a fun, utility, and administration bot made for Eternal Parad
 To host an instance of EPH, first head to the [Discord Developer Portal](https://discord.com/developers/applications)
 and create a new app.
 
-Next, you'll need to select a hosting provider. I recommend [Railway](https://railway.com) for ease-of-use.
+Next, you'll need to select a hosting provider. I recommend Railway for ease-of-use.
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/WBDHYM?referralCode=xcXfgk)
 
@@ -15,6 +15,12 @@ EPH needs 3 services to function properly:
 2. [MongoDB](https://mongodb.com) - EPH uses MongoDB as a primary database for storing all necessary data.
 You can create a free MongoDB instance [here](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/).
 3. [EP Helper App](https://github.com/TheFallenSpirit/ep-helper) - This project, the core application that connects to Discord and listens to gateway events.
+
+### Gateway Intents
+EPH uses the following gateway intents:
+
+- "Server Members" - EPH uses the server members intent to view member information and receive member-related events.
+- "Message Content" - EPH uses the message content intent for auto reactions and to provide plaintext commands.
 
 ### Local Hosting
 To host EPH on your own hardware (Linux, MacOS, or Windows),
