@@ -2,6 +2,7 @@
     "cSpell.words": [
         "fallencodes",
         "followup",
+        "sismember",
         "smembers",
         "srem",
         "Valkey",

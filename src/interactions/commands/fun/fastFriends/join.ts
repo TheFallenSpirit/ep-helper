@@ -15,8 +15,12 @@ export default class extends SubCommand {
             content: 'Hold up! There are no active fast friends game sessions.'
         });
 
-        const members = await redis.smembers(`ep_ff_members:${context.guildId}`);
-        if (members.includes(context.author.id)) return context.editOrReply({
+        const isMember = await redis.sismember(
+            `ep_ff_members:${context.guildId}`,
+            context.author.id
+        );
+
+        if (isMember) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             content: `Hold up! You're already in this game silly.`
         });

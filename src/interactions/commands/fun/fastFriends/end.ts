@@ -1,5 +1,5 @@
 import { redis } from '@/store.js';
-import { CommandContext, Declare, SubCommand } from 'seyfert';
+import { CommandContext, Declare, Middlewares, SubCommand } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 @Declare({
@@ -8,6 +8,7 @@ import { MessageFlags } from 'seyfert/lib/types/index.js';
     defaultMemberPermissions: ['ManageEvents']
 })
 
+@Middlewares(['fastFriendsSession'])
 export default class extends SubCommand {
     run = async (context: CommandContext) => {
         await redis.del(`ep_ff_active:${context.guildId}`);

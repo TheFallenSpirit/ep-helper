@@ -1,6 +1,6 @@
 import { redis } from '@/store.js';
 import { randomId, wait } from '@fallencodes/seyfert-utils';
-import { CommandContext, createChannelOption, createNumberOption, Declare, Options, SubCommand } from 'seyfert';
+import { CommandContext, createChannelOption, createNumberOption, Declare, Middlewares, Options, SubCommand } from 'seyfert';
 import { ChannelType, MessageFlags, OverwriteType } from 'seyfert/lib/types/index.js';
 
 const options = {
@@ -31,22 +31,12 @@ const options = {
 })
 
 @Options(options)
+@Middlewares(['fastFriendsSession'])
+
 export default class extends SubCommand {
     run = async (context: CommandContext<typeof options>) => {
         const guild = await context.guild();
         if (!guild) return context.replyWith(context, 'guildUnavailable');
-
-        const channel = await context.channel();
-        if (!channel.isVoice() && !channel.isStage()) return context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            content: 'Hold up! You must use this command in a voice or stage channel.'
-        });
-
-        const channelId = await redis.get(`ep_ff_active:${guild.id}`);
-        if (!channelId || channel.id !== channelId) return context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            content: 'Hold up! You must use this command in the channel you started the session in.'
-        });
 
         const members = await redis.smembers(`ep_ff_members:${guild.id}`);
         if (members.length < 2) return context.editOrReply({
@@ -69,7 +59,8 @@ export default class extends SubCommand {
         });
 
         const pairs = createPairs(members, groupSize);
-        console.log(pairs);
+        const channelId = await redis.get(`ep_ff_active:${guild.id}`);
+        // console.log(pairs);
 
         for await (const pair of pairs) {
             const pairChannel = await guild.channels.create({

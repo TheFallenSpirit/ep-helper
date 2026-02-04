@@ -9,16 +9,14 @@ import { MessageFlags } from 'seyfert/lib/types/index.js';
 
 export default class extends SubCommand {
     run = async (context: CommandContext) => {
-        const active = await redis.get(`ep_ff_active:${context.guildId}`);
-        if (!active) return context.editOrReply({
-            flags: MessageFlags.Ephemeral,
-            content: 'Hold up! There are no active fast friends game sessions.'
-        });
+        const isMember = await redis.sismember(
+            `ep_ff_members:${context.guildId}`,
+            context.author.id
+        );
 
-        const members = await redis.smembers(`ep_ff_members:${context.guildId}`);
-        if (!members.includes(context.author.id)) return context.editOrReply({
+        if (!isMember) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
-            content: `Hold up! You're aren't in this game silly.`
+            content: `Hold up! You're aren't in a fast friends game silly.`
         });
 
         await redis.srem(

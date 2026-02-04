@@ -11,7 +11,6 @@ import { MessageFlags } from 'seyfert/lib/types/index.js';
 export default class extends SubCommand {
     run = async (context: CommandContext<{}, 'guildConfig'>) => {
         const channel = await context.channel();
-        
         if (!channel.isVoice() && !channel.isStage()) return context.editOrReply({
             flags: MessageFlags.Ephemeral,
             content: 'Hold up! You must use this command in a voice or stage channel.'

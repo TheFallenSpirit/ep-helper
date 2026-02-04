@@ -3,6 +3,7 @@ import { GuildI } from '../models/Guild.js';
 import { getGuild } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import { s } from '@fallencodes/seyfert-utils';
+import { fastFriendsSession } from './fastFriends.js';
 
 const userLock = createMiddleware<void>(async ({ next, context }) => {
     if (!('customId' in context)) return next();
@@ -44,5 +45,6 @@ const internalAccess = createMiddleware<void>(async ({ next, context }) => {
 export default {
     userLock,
     guildConfig,
-    internalAccess
+    internalAccess,
+    fastFriendsSession
 };
