@@ -14,7 +14,7 @@ export default createEvent({
 
         client.config = dbConfig.toObject();
         await client.uploadCommands({ cachePath: './commands.json' });
-        if ((client.config.status?.items?.length ?? 0) > 0) handleStatusChange(client);
+        handleStatusChange(client);
 
         const currentGuilds = client.cache.guilds?.values();
         const wlEnabled = (client.config.whitelistedGuildIds?.length ?? 0) > 0;
