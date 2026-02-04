@@ -4,6 +4,7 @@
         "followup",
         "smembers",
         "srem",
+        "Valkey",
         "VIPI",
         "Yuna",
         "yunaforseyfert"

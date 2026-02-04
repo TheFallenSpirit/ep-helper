@@ -11,10 +11,10 @@ Next, you'll need to select a hosting provider. I recommend [Railway](https://ra
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/WBDHYM?referralCode=xcXfgk)
 
 EPH needs 3 services to function properly:
-1. Redis - EPH uses Redis to cache data (like server configs) in memory so commands can run faster.
-2. MongoDB - EPH uses MongoDB as a primary database for storing all necessary data.
+1. [Valkey](https://valkey.io) - EPH uses Redis/Valkey to cache data (like server configs) in memory so commands can run faster. Learn how to install Valkey [here](https://valkey.io/topics/installation/).
+2. [MongoDB](https://mongodb.com) - EPH uses MongoDB as a primary database for storing all necessary data.
 You can create a free MongoDB instance [here](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/).
-3. EP Helper App - This project, the core application that connects to Discord and listens to gateway events.
+3. [EP Helper App](https://github.com/TheFallenSpirit/ep-helper) - This project, the core application that connects to Discord and listens to gateway events.
 
 ### Local Hosting
 To host EPH on your own hardware (Linux, MacOS, or Windows),
