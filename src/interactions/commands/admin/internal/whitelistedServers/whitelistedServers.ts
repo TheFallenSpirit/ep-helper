@@ -1,8 +1,7 @@
 import { AutoLoad, Command, Declare, IgnoreCommand, Middlewares } from 'seyfert';
 
 @Declare({
-    name: 'whitelisted-servers',
-    aliases: ['wls'],
+    name: 'wls',
     contexts: ['Guild'],
     ignore: IgnoreCommand.Slash,
     integrationTypes: ['GuildInstall'],
