@@ -1,4 +1,5 @@
 import { CommandCategoryKey } from '@/module.js';
+import { getGuild } from '@/store.js';
 import { colors, isInstalled, name, s } from '@fallencodes/seyfert-utils';
 import { createContainer, createSeparator, createTextDisplay, createTextSection } from '@fallencodes/seyfert-utils/components/message';
 import { Command, CommandContext, createStringOption, Declare, IgnoreCommand, Options, SubCommand, UsingClient } from 'seyfert';
@@ -28,6 +29,12 @@ const categories: CommandCategory[] = [
         label: 'Admin Commands',
         description: 'Admin commands for configuring me in your server.',
         headerDescription: 'these commands are for configuring the app and taking admin actions.'
+    },
+    {
+        key: 'internal',
+        label: 'Internal Commands',
+        description: 'Internal commands for configuring me globally.',
+        headerDescription: 'these commands are for configuring my global settings (internal admins only).'
     }
 ];
 
@@ -52,14 +59,10 @@ export default class extends Command {
         const category = context.options.category;
         const lines = { header: [] as string[], content: [] as string[], footer: [] as string[] };
 
+        let prefix = 'ep';
         let guildName: string | undefined;
         let username = s(context.client.me.username);
         let avatarUrl = context.client.me.avatarURL();
-
-        if (isInstalled(context)) {
-            const guild = await context.guild();
-            if (guild) guildName = s(guild.name);
-        };
 
         if (context.guildId) {
             const member = context.client.cache.members?.get(context.client.me.id, context.guildId);
@@ -67,6 +70,16 @@ export default class extends Command {
             if (member) {
                 username = s(member.displayName);
                 avatarUrl = member.avatarURL();
+            };
+        };
+
+        if (isInstalled(context)) {
+            const guild = await context.guild();
+
+            if (guild) {
+                guildName = s(guild.name);
+                const guildConfig = await getGuild(guild.id);
+                if (guildConfig?.prefix) prefix = guildConfig.prefix;
             };
         };
 
@@ -79,13 +92,11 @@ export default class extends Command {
                 `A list of ${username}'s ${categoryInfo.label.toLowerCase()} -- ${categoryInfo.headerDescription}`
             );
 
-            lines.content.push(...commands.map((cmd) => {
-                const lines = [`${cmd.subCommands ? '\n' : ''}- /**${cmd.name}**`];
-                if (cmd.aliases) lines.push(` ${cmd.aliases.map((a) => `\`${a}\``).join(' ')}`);
-                lines.push(` - ${cmd.description}`);
+            lines.content.push(...commands.map((command) => {
+                const lines = [getCommandInfo(command, { prefix, isSubCommand: false })];
 
-                if (cmd.subCommands) lines.push(
-                    ...cmd.subCommands.map((cmd) => `\n  - /**${cmd.name}** - ${cmd.description}`)
+                if (command.subCommands) lines.push(
+                    ...command.subCommands.map((cmd) => `\n  ${getCommandInfo(cmd, { prefix, isSubCommand: true })}`)
                 );
 
                 lines.push('\n');
@@ -93,7 +104,8 @@ export default class extends Command {
             }));
 
             lines.footer.push(
-                'To view all command categories, use this command without a category.'
+                'To view all command categories, use this command without a category.',
+                ' All slash commands are also usable as plain text commands.'
             );
         } else {
             lines.header.push(
@@ -133,15 +145,19 @@ function generateCommandList(client: UsingClient, options?: CommandListOptions):
     .filter(({ props: { category } }) => category === options.category);
 
     for (const command of filteredClientCommands) {
-        const subCommands = (command.options ?? []).filter(({ type }) => {
+        const subCommands = ((command.options ?? []).filter(({ type }) => {
             return type === ApplicationCommandOptionType.Subcommand;
-        }) as SubCommand[];
+        }) as SubCommand[]).map((cmd) => ({
+            ...cmd,
+            name: `${command.name}${cmd.group ? ` ${cmd.group}` : ''} ${cmd.name}`,
+            isTextOnly: command.ignore === IgnoreCommand.Slash
+        }));
 
         commandList.push({
             name: command.name,
-            ignore: command.ignore,
             aliases: command.aliases,
             description: command.description,
+            isTextOnly: command.ignore === IgnoreCommand.Slash,
             subCommands: subCommands.length > 0 ? subCommands : undefined
             // syntax: options.withOptions === true ? command.props.textSyntax : undefined,
             // options: options.withOptions === true ? command.options?.filter(({ type }) => type !== 1) : undefined
@@ -154,7 +170,21 @@ function generateCommandList(client: UsingClient, options?: CommandListOptions):
 
 function filterClientCommands(client: UsingClient) {
     return client.commands.values.filter((cmd) => (cmd instanceof Command))
-    .filter(({ type, props }) => type === ApplicationCommandType.ChatInput && props.category !== 'internal');
+    .filter(({ type }) => type === ApplicationCommandType.ChatInput);
+};
+
+interface CommandInfoOptions {
+    prefix: string;
+    isSubCommand: boolean;
+}
+
+function getCommandInfo(command: CommandListItem, options: CommandInfoOptions) {
+    return [
+        `${command.subCommands ? '\n' : ''}- `,
+        command.isTextOnly === true ? `**\`${options.prefix} ${command.name}\`**` : `/${command.name}`,
+        command.aliases ? ` ${command.aliases.map((a) => `\`${a}\``).join('')}` : '',
+        ` - ${command.description}`
+    ].join('')
 };
 
 interface CommandCategory {
@@ -173,7 +203,7 @@ interface CommandListItem {
     syntax?: string;
     aliases?: string[];
     description: string;
-    ignore?: IgnoreCommand;
+    isTextOnly?: boolean;
     subCommands?: CommandListItem[];
     // options?: CommandOptionWithType[];
 }
