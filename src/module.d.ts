@@ -8,7 +8,7 @@ declare module 'seyfert' {
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof middlewares> {}
 
     interface ExtraProps {
-        category: 'fun' | 'admin' | 'utility' | 'internal' | 'hidden';
+        category: CommandCategoryKey;
     }
 
     interface InternalOptions {
@@ -24,3 +24,5 @@ declare module 'seyfert' {
         replyWith: (context: AnyContext, key: LangKey, props?: LangProps) => void;
     }
 };
+
+export type CommandCategoryKey = 'fun' | 'info' | 'admin' | 'utility' | 'internal' | 'hidden';

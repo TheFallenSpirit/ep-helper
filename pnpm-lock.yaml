@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@fallencodes/seyfert-utils':
-        specifier: ^1.3.2
-        version: 1.3.2
+        specifier: ^1.3.6
+        version: 1.3.6
       '@sapphire/snowflake':
         specifier: ^3.5.5
         version: 3.5.5
@@ -54,8 +54,8 @@ importers:
 
 packages:
 
-  '@fallencodes/seyfert-utils@1.3.2':
-    resolution: {integrity: sha512-ZV3yoVCLSCXHhPr6QNdhDidlY8KfCNH69LaL/wlnt7vfvXfqRXiKVJUUPfafCM0wUYA4sEccVeVvRFz0zbb09w==}
+  '@fallencodes/seyfert-utils@1.3.6':
+    resolution: {integrity: sha512-sh7b/UzXGgqzpM/r9UBFOaaeOQpCm2YJkwDFNVHfQ/Qjakpyv/Aw44Ruq9q1JSv0KM7oob9KTETCRbps3joG6A==}
     engines: {node: '>=22'}
 
   '@ioredis/commands@1.5.0':
@@ -391,7 +391,7 @@ packages:
 
 snapshots:
 
-  '@fallencodes/seyfert-utils@1.3.2':
+  '@fallencodes/seyfert-utils@1.3.6':
     dependencies:
       '@sapphire/snowflake': 3.5.5
       dayjs: 1.11.19
