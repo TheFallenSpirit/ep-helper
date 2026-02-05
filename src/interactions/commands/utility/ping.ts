@@ -2,7 +2,8 @@ import { Command, CommandContext, Declare } from 'seyfert';
 
 @Declare({
     name: 'ping',
-    description: 'View my gateway and application ping.'
+    description: 'View my gateway and application ping.',
+    props: { category: 'utility' }
 })
 
 export default class extends Command {

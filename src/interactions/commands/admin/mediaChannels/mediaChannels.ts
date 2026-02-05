@@ -7,7 +7,8 @@ import { ChannelType } from 'seyfert/lib/types/index.js';
     contexts: ['Guild'],
     integrationTypes: ['GuildInstall'],
     defaultMemberPermissions: ['ManageChannels'],
-    description: 'Add or remove media channels for logging in this server.'
+    description: 'Add or remove media channels for logging in this server.',
+    props: { category: 'admin' }
 })
 
 @AutoLoad()

@@ -7,6 +7,10 @@ import { AppConfigI } from './models/AppConfig.ts';
 declare module 'seyfert' {
     interface RegisteredMiddlewares extends ParseMiddlewares<typeof middlewares> {}
 
+    interface ExtraProps {
+        category: 'fun' | 'admin' | 'utility' | 'internal' | 'hidden';
+    }
+
     interface InternalOptions {
         withPrefix: true;
     }

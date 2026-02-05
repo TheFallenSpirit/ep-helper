@@ -16,7 +16,8 @@ const options = {
     botPermissions: ['ManageMessages'],
     integrationTypes: ['GuildInstall'],
     defaultMemberPermissions: ['ManageGuild', 'ManageMessages'],
-    description: 'Delete all logged media messages from a user.'  
+    description: 'Delete all logged media messages from a user.',
+    props: { category: 'admin' }  
 })
 
 @Options(options)

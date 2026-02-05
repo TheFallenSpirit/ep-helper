@@ -8,7 +8,8 @@ import { createContainer, createTextDisplay, createSeparator } from '@fallencode
     contexts: ['Guild'],
     integrationTypes: ['GuildInstall'],
     defaultMemberPermissions: ['ManageGuild'],
-    description: `View this server's configuration.`
+    description: `View this server's configuration.`,
+    props: { category: 'admin' }
 })
 
 @Middlewares(['guildConfig'])

@@ -6,7 +6,8 @@ import { AutoLoad, Command, Declare, Middlewares } from 'seyfert';
     contexts: ['Guild'],
     botPermissions: ['Administrator'],
     integrationTypes: ['GuildInstall'],
-    description: 'Join, leave, or manage a fast friends game.'
+    description: 'Join, leave, or manage a fast friends game.',
+    props: { category: 'fun' }
 })
 
 @AutoLoad()

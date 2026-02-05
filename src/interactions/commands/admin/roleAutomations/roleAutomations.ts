@@ -8,7 +8,8 @@ import { getGuild } from '../../../../store.js';
     botPermissions: ['ManageRoles'],
     integrationTypes: ['GuildInstall'],
     defaultMemberPermissions: ['ManageRoles'],
-    description: 'Create and manage role automations in this server.'
+    description: 'Create and manage role automations in this server.',
+    props: { category: 'admin' }
 })
 
 @AutoLoad()
