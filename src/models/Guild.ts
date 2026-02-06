@@ -12,6 +12,7 @@ export interface GuildI {
     _id: string;
     prefix?: string;
     guildId: string;
+    whipLines?: string[];
     mediaChannels?: string[];
     roleAutomations?: RoleAutomation[];
 }
@@ -27,6 +28,7 @@ const guildSchema = new Schema<GuildI>({
     _id: { required: true, type: String, default: () => randomId(16) },
     guildId: { required: true, type: String },
     prefix: { required: false, type: String },
+    whipLines: { required: false, type: [String] },
     mediaChannels: { required: false, type: [String] },
     roleAutomations: { required: false, type: [roleAutomationSchema] }
 }, { _id: false, versionKey: false, timestamps: true });
