@@ -1,9 +1,10 @@
 import { createMiddleware } from 'seyfert';
 import { GuildI } from '../models/Guild.js';
-import { getGuild } from '../store.js';
+import { getGuild, getProfile } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
-import { s } from '@fallencodes/seyfert-utils';
+import { isInstalled, s } from '@fallencodes/seyfert-utils';
 import { fastFriendsSession } from './fastFriends.js';
+import { ProfileI } from '@/models/Profile.js';
 
 const userLock = createMiddleware<void>(async ({ next, context }) => {
     if (!('customId' in context)) return next();
@@ -42,7 +43,13 @@ const internalAccess = createMiddleware<void>(async ({ next, context }) => {
     next();
 });
 
+const profile = createMiddleware<ProfileI>(async ({ next, context }) => {
+    if (!isInstalled(context)) return;
+    next(await getProfile(context.guildId!, context.author.id));
+});
+
 export default {
+    profile,
     userLock,
     guildConfig,
     internalAccess,

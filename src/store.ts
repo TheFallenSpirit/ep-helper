@@ -4,6 +4,7 @@ import { UpdateQuery } from 'mongoose';
 import { replacer, reviver } from '@fallencodes/seyfert-utils';
 import { UsingClient } from 'seyfert';
 import AppConfig, { AppConfigI } from './models/AppConfig.js';
+import Profile, { ProfileI } from './models/Profile.js';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
 
@@ -34,4 +35,25 @@ export async function updateAppConfig(client: UsingClient, query: UpdateQuery<Ap
 
     client.config = appConfig.toObject();
     return client.config;
+};
+
+export async function getProfile(guildId: string, userId: string): Promise<ProfileI> {
+    const rawProfile = await redis.get(`ep_profile:${guildId}:${userId}`);
+    if (rawProfile) return JSON.parse(rawProfile, reviver) as ProfileI;
+
+    let profile = await Profile.findOne({ guildId, userId });
+    if (!profile) profile = await Profile.create({ guildId, userId });
+
+    const profileObject = profile.toObject();
+    await redis.set(`ep_profile:${guildId}:${userId}`, JSON.stringify(profileObject, replacer), 'EX', 604800);
+    return profileObject;
+};
+
+export async function updateProfile(guildId: string, userId: string, query: UpdateQuery<ProfileI>): Promise<ProfileI> {
+    const profile = await Profile.findOneAndUpdate({ guildId, userId }, query, { new: true });
+    if (!profile) throw new Error(`The specified profile wasn't found -- ${guildId}:${userId}`);
+
+    const profileObject = profile.toObject();
+    await redis.set(`ep_profile:${guildId}:${userId}`, JSON.stringify(profileObject, replacer), 'EX', 604800);
+    return profileObject;
 };
