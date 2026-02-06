@@ -37,12 +37,12 @@ export async function updateAppConfig(client: UsingClient, query: UpdateQuery<Ap
     return client.config;
 };
 
-export async function getProfile(guildId: string, userId: string): Promise<ProfileI> {
+export async function getProfile(guildId: string, userId: string): Promise<ProfileI | undefined> {
     const rawProfile = await redis.get(`ep_profile:${guildId}:${userId}`);
     if (rawProfile) return JSON.parse(rawProfile, reviver) as ProfileI;
 
-    let profile = await Profile.findOne({ guildId, userId });
-    if (!profile) profile = await Profile.create({ guildId, userId });
+    const profile = await Profile.findOne({ guildId, userId });
+    if (!profile) return;
 
     const profileObject = profile.toObject();
     await redis.set(`ep_profile:${guildId}:${userId}`, JSON.stringify(profileObject, replacer), 'EX', 604800);

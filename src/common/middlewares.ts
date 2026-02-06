@@ -1,10 +1,10 @@
 import { createMiddleware } from 'seyfert';
 import { GuildI } from '../models/Guild.js';
-import { getGuild, getProfile } from '../store.js';
+import { getGuild, getProfile, redis } from '../store.js';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
-import { isInstalled, s } from '@fallencodes/seyfert-utils';
+import { isInstalled, replacer, s } from '@fallencodes/seyfert-utils';
 import { fastFriendsSession } from './fastFriends.js';
-import { ProfileI } from '@/models/Profile.js';
+import Profile, { ProfileI } from '@/models/Profile.js';
 
 const userLock = createMiddleware<void>(async ({ next, context }) => {
     if (!('customId' in context)) return next();
@@ -45,7 +45,21 @@ const internalAccess = createMiddleware<void>(async ({ next, context }) => {
 
 const profile = createMiddleware<ProfileI>(async ({ next, context }) => {
     if (!isInstalled(context)) return;
-    next(await getProfile(context.guildId!, context.author.id));
+    let profile = await getProfile(context.guildId!, context.author.id);
+
+    if (!profile) profile = (await Profile.create({
+        guildId: context.guildId!,
+        userId: context.author.id
+    })).toObject();
+
+    await redis.set(
+        `ep_profile:${context.guildId}:${context.author.id}`,
+        JSON.stringify(profile, replacer),
+        'EX',
+        604800
+    );
+
+    next(profile);
 });
 
 export default {
