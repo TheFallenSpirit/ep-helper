@@ -1,6 +1,14 @@
 import { AnyContext, UsingClient } from 'seyfert';
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import lang, { LangKey, LangProps } from './common/lang.js';
+import dayjs from 'dayjs';
+import utcPlugin from 'dayjs/plugin/utc.js';
+import durationPlugin from 'dayjs/plugin/duration.js';
+import relativePlugin from 'dayjs/plugin/relativeTime.js';
+
+dayjs.extend(utcPlugin);
+dayjs.extend(durationPlugin);
+dayjs.extend(relativePlugin);
 
 export function environmentCheck() {
     const envKeys = ['DISCORD_TOKEN', 'MONGO_URL', 'REDIS_URL'];
