@@ -38,9 +38,15 @@ export default class extends SubCommand {
         });
 
         const permissions = await channel.memberPermissions(me);
-        if (!permissions.has(channelPermissions.keys())) return context.editOrReply({
-            content: `Hold up! I don't have proper message perms in ${channel}.`
-        });
+        if (!permissions.has(channelPermissions.values())) {
+            const lines = [
+                `Hold up! ${me.displayName} doesn't have the required permissions in ${channel}.`,
+                `Please give ${me.displayName} the following permissions:\n`,
+                `\`\`\`txt\n${channelPermissions.keys().join(', ')}\n\`\`\``
+            ];
+
+            return context.editOrReply({ content: lines.join('') });
+        };
 
         await updateGuild(guild.id, { $set: { logsChannelId: channel.id } });
         await context.editOrReply({ content: `Successfully set ${s(guild.name)}'s logs channel to ${channel}.` });
