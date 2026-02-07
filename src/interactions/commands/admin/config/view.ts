@@ -2,6 +2,7 @@ import { CommandContext, ContainerBuilderComponents, Declare, SubCommand } from 
 import { MessageFlags } from 'seyfert/lib/types/index.js';
 import { s, truncateString, truncateStringArray } from '@fallencodes/seyfert-utils';
 import { createContainer, createTextDisplay, createSeparator, createTextSection } from '@fallencodes/seyfert-utils/components/message';
+import dayjs from 'dayjs';
 
 @Declare({
     name: 'view',
@@ -19,14 +20,18 @@ export default class extends SubCommand {
             `To learn how to update this server's config, use /help and select "Admin Commands".`
         ];
 
-        const mediaDeleteDelay = guildConfig.media?.deleteAfterDelay;
         const mediaChannels = guildConfig.mediaChannels?.map((id) => `<#${id}>`);
         const whipLines = guildConfig.whipLines?.map((line) => `- ${truncateString(line)}`);
+
+        let mediaDeleteDelay = 'None';
+        if (guildConfig.media?.deleteAfterDelay) {
+            mediaDeleteDelay = dayjs.utc().add(guildConfig.media.deleteAfterDelay, 'm').fromNow(true);
+        };
 
         const lines = [
             `**Prefix**: \`${guildConfig.prefix ?? 'ep'}\`\n\n`,
             `**Auto Delete Media**: ${guildConfig.media?.autoDelete === true ? 'Yes' : 'No'}\n`,
-            `**Auto Delete Delay**: ${mediaDeleteDelay ? `${mediaDeleteDelay} minutes`: 'None' }\n`,
+            `**Auto Delete Delay**: ${mediaDeleteDelay}\n`,
             `**Media Logging Channels**: ${mediaChannels?.join(', ') || 'None'}\n\n`,
             `**Whip Lines**:\n${truncateStringArray(whipLines ?? []).join(', ') || 'None'}`
         ];
