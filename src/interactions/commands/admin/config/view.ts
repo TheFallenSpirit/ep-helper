@@ -29,7 +29,8 @@ export default class extends SubCommand {
         };
 
         const lines = [
-            `**Prefix**: \`${guildConfig.prefix ?? 'ep'}\`\n\n`,
+            `**Prefix**: \`${guildConfig.prefix ?? 'ep'}\`\n`,
+            `**Logs Channel**: ${guildConfig.logsChannelId ? `<#${guildConfig.logsChannelId}>` : 'None'}\n\n`,
             `**Auto Delete Media**: ${guildConfig.media?.autoDelete === true ? 'Yes' : 'No'}\n`,
             `**Auto Delete Delay**: ${mediaDeleteDelay}\n`,
             `**Media Logging Channels**: ${mediaChannels?.join(', ') || 'None'}\n\n`,
