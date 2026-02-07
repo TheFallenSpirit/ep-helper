@@ -41,7 +41,7 @@ export default class extends SubCommand {
         if (!permissions.has(channelPermissions.values())) {
             const lines = [
                 `Hold up! ${me.displayName} doesn't have the required permissions in ${channel}.`,
-                `Please give ${me.displayName} the following permissions:\n`,
+                ` Please give ${me.displayName} the following permissions:\n`,
                 `\`\`\`txt\n${channelPermissions.keys().join(', ')}\n\`\`\``
             ];
 
