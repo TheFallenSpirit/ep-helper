@@ -10,6 +10,14 @@ dayjs.extend(utcPlugin);
 dayjs.extend(durationPlugin);
 dayjs.extend(relativePlugin);
 
+dayjs.locale('en', {
+    relativeTime: {
+        ...dayjs.Ls.en?.relativeTime,
+        d: '1 day',
+        m: '1 minute'
+    }
+});
+
 export function environmentCheck() {
     const envKeys = ['DISCORD_TOKEN', 'MONGO_URL', 'REDIS_URL'];
     for (const key of envKeys) if (!process.env[key]) {
