@@ -6,6 +6,7 @@ import defaults, { prefix } from './common/defaults.js';
 import handleCommand from './structures/handleCommand.js';
 import EPClient from './client.js';
 import customizeLogger from '@fallencodes/seyfert-utils/logger';
+import { redisSub } from './store.js';
 
 environmentCheck();
 customizeLogger();
@@ -40,5 +41,14 @@ startCrons(client);
 connect(process.env.MONGO_URL ?? '')
 .then(() => client.logger.info('Successfully connected to MongoDB.'))
 .catch((error) => client.logger.fatal(`Failed to connect to MongoDB -- ${String(error)}`));
+
+const channelName = `__keyevent@${redisSub.options.db}__:expired`;
+await redisSub.config('SET', 'notify-keyspace-events', 'Ex');
+await redisSub.subscribe(channelName);
+
+redisSub.on('message', async (channel, message) => {
+    if (channel !== channelName) return;
+    await client.events.runCustom('redisExpiry', message);
+});
 
 client.start();

@@ -7,6 +7,7 @@ import AppConfig, { AppConfigI } from './models/AppConfig.js';
 import Profile, { ProfileI } from './models/Profile.js';
 
 export const redis = new Redis(process.env.REDIS_URL ?? '');
+export const redisSub = new Redis(process.env.REDIS_URL ?? '');
 
 export async function getGuild(guildId: string): Promise<GuildI> {
     const rawGuildConfig = await redis.get(`ep_guild:${guildId}`);

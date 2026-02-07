@@ -23,6 +23,10 @@ declare module 'seyfert' {
     interface ExtendContext {
         replyWith: (context: AnyContext, key: LangKey, props?: LangProps) => void;
     }
+
+    interface CustomEvents {
+        redisExpiry: (key: string) => Promise<void>;
+    }
 };
 
 export type CommandCategoryKey = 'fun' | 'info' | 'admin' | 'utility' | 'internal' | 'hidden';
