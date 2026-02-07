@@ -1,5 +1,5 @@
 import { Command, CommandContext, createUserOption, Declare, Middlewares, Options } from 'seyfert';
-import MediaLog from '../../../models/MediaLog.js';
+import MediaLog, { MediaLogResult } from '../../../models/MediaLog.js';
 import { s, wait } from '@fallencodes/seyfert-utils';
 
 const options = {
@@ -64,9 +64,3 @@ export default class extends Command {
         });
     };
 };
-
-interface MediaLogResult {
-    guildId: string;
-    channelId: string;
-    messageId: string;
-}

@@ -1,0 +1,53 @@
+import { CommandContext, ContainerBuilderComponents, Declare, SubCommand } from 'seyfert';
+import { MessageFlags } from 'seyfert/lib/types/index.js';
+import { s, truncateString, truncateStringArray } from '@fallencodes/seyfert-utils';
+import { createContainer, createTextDisplay, createSeparator, createTextSection } from '@fallencodes/seyfert-utils/components/message';
+
+@Declare({
+    name: 'view',
+    description: `View this server's config and settings.`
+})
+
+export default class extends SubCommand {
+    run = async (context: CommandContext<{}, 'guildConfig'>) => {
+        const guild = await context.guild();
+        if (!guild) return context.replyWith(context, 'guildUnavailable');
+        const guildConfig = context.metadata.guildConfig;
+
+        const headerLines = [
+            `### Server Config • ${s(guild.name)}\n`,
+            `To learn how to update this server's config, use /help and select "Admin Commands".`
+        ];
+
+        const mediaDeleteDelay = guildConfig.media?.deleteAfterDelay;
+        const mediaChannels = guildConfig.mediaChannels?.map((id) => `<#${id}>`);
+        const whipLines = guildConfig.whipLines?.map((line) => `- ${truncateString(line)}`);
+
+        const lines = [
+            `**Prefix**: \`${guildConfig.prefix ?? 'ep'}\`\n\n`,
+            `**Auto Delete Media**: ${guildConfig.media?.autoDelete === true ? 'Yes' : 'No'}\n`,
+            `**Auto Delete Delay**: ${mediaDeleteDelay ? `${mediaDeleteDelay} minutes`: 'None/' }\n`,
+            `**Media Logging Channels**: ${mediaChannels?.join(', ') || 'None'}\n\n`,
+            `**Whip Lines**:\n${truncateStringArray(whipLines ?? []).join(', ') || 'None'}`
+        ];
+
+        const guildIconUrl = guild.iconURL();
+        let headerSection: ContainerBuilderComponents = createTextDisplay(headerLines.join(''));
+
+        if (guildIconUrl) headerSection = createTextSection(
+            headerLines.join(''),
+            { type: 'thumbnail', url: guildIconUrl }
+        );
+        
+        const container = createContainer([
+            headerSection,
+            createSeparator(),
+            createTextDisplay(lines.join(''))
+        ]);
+
+        await context.editOrReply({
+            flags: MessageFlags.IsComponentsV2,
+            components: [container]
+        });
+    };
+};
