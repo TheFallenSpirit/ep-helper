@@ -16,7 +16,8 @@ const options = {
     contexts: ['Guild'],
     botPermissions: ['ManageChannels', 'ManageWebhooks'],
     integrationTypes: ['GuildInstall'],
-    description: 'Whip another user and cause them to moan a random line.'
+    description: 'Whip another user and cause them to moan a random line.',
+    props: { category: 'fun' }
 })
 
 @Options(options)
