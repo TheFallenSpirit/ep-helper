@@ -13,7 +13,9 @@ export default (client: UsingClient, key: LangKey, props: Record<string, any> = 
 };
 
 const lines = {
-    invalidUser: "Hold up! | This interaction isn't meant for you.",
-    invalidVipTier: "Hold up! | Your VIP tier \"{id}\" wasn't found, please use {cmd:vip info}.",
-    guildUnavailable: "Hold up! | {self} wasn't able to fetch this server's info, please try again later."
+    noChanges: "Hold up! You didn't make any changes silly.",
+    invalidUser: "Hold up! This interaction isn't meant for you.",
+    noGuildMember: "Error! {self} wasn't able to find your server.",
+    invalidVipTier: "Hold up! Your VIP tier \"{id}\" wasn't found, please use {cmd:vip info}.",
+    guildUnavailable: "Hold up! {self} wasn't able to fetch this server's info, please try again later."
 };
