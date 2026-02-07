@@ -26,7 +26,7 @@ export default class extends SubCommand {
         const lines = [
             `**Prefix**: \`${guildConfig.prefix ?? 'ep'}\`\n\n`,
             `**Auto Delete Media**: ${guildConfig.media?.autoDelete === true ? 'Yes' : 'No'}\n`,
-            `**Auto Delete Delay**: ${mediaDeleteDelay ? `${mediaDeleteDelay} minutes`: 'None/' }\n`,
+            `**Auto Delete Delay**: ${mediaDeleteDelay ? `${mediaDeleteDelay} minutes`: 'None' }\n`,
             `**Media Logging Channels**: ${mediaChannels?.join(', ') || 'None'}\n\n`,
             `**Whip Lines**:\n${truncateStringArray(whipLines ?? []).join(', ') || 'None'}`
         ];
