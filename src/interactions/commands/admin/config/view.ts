@@ -53,7 +53,8 @@ export default class extends SubCommand {
 
         await context.editOrReply({
             flags: MessageFlags.IsComponentsV2,
-            components: [container]
+            components: [container],
+            allowed_mentions: { parse: [] }
         });
     };
 };
