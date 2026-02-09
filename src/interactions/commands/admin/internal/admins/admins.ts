@@ -2,6 +2,7 @@ import { AutoLoad, Command, Declare, IgnoreCommand } from 'seyfert';
 
 @Declare({
     name: 'admins',
+    aliases: ['admin'],
     contexts: ['Guild'],
     ignore: IgnoreCommand.Slash,
     integrationTypes: ['GuildInstall'],
