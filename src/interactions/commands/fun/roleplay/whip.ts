@@ -72,9 +72,8 @@ export default class extends Command {
             }).then(() => false).catch(() => true);
         };
 
-        if (!error) return;
+        if (!error && webhookCacheRaw) return;
         const webhooks = await channel.webhooks.list();
-
         let webhook = webhooks.find(({ applicationId }) => applicationId === context.client.me.id);
         if (!webhook) webhook = await channel.webhooks.create({ name: 'EP Utility' });
 

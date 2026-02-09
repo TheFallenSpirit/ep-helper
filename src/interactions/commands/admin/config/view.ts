@@ -34,7 +34,7 @@ export default class extends SubCommand {
             `**Auto Delete Media**: ${guildConfig.media?.autoDelete === true ? 'Yes' : 'No'}\n`,
             `**Auto Delete Delay**: ${mediaDeleteDelay}\n`,
             `**Media Logging Channels**: ${mediaChannels?.join(', ') || 'None'}\n\n`,
-            `**Whip Lines**:\n${truncateStringArray(whipLines ?? []).join(', ') || 'None'}`
+            `**Whip Lines**:\n${truncateStringArray(whipLines ?? []).join('\n') || 'None'}`
         ];
 
         const guildIconUrl = guild.iconURL();
@@ -53,7 +53,8 @@ export default class extends SubCommand {
 
         await context.editOrReply({
             flags: MessageFlags.IsComponentsV2,
-            components: [container]
+            components: [container],
+            allowed_mentions: { parse: [] }
         });
     };
 };
