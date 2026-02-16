@@ -1,4 +1,5 @@
 import { AutoLoad, Command, Declare, IgnoreCommand } from 'seyfert';
+import AdminsList from './list.js'
 
 @Declare({
     name: 'admins',
@@ -11,4 +12,7 @@ import { AutoLoad, Command, Declare, IgnoreCommand } from 'seyfert';
 })
 
 @AutoLoad()
-export default class extends Command {};
+
+export default class extends Command {
+    run = new AdminsList().run;
+};

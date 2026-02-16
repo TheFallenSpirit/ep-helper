@@ -1,4 +1,5 @@
 import { AutoLoad, Command, Declare, IgnoreCommand, Middlewares } from 'seyfert';
+import ListStatuses from './list.js';
 
 @Declare({
     name: 'statuses',
@@ -12,4 +13,7 @@ import { AutoLoad, Command, Declare, IgnoreCommand, Middlewares } from 'seyfert'
 
 @AutoLoad()
 @Middlewares(['internalAccess'])
-export default class extends Command {};
+
+export default class extends Command {
+    run = new ListStatuses().run;
+};

@@ -1,4 +1,5 @@
 import { AutoLoad, Command, Declare, IgnoreCommand, Middlewares } from 'seyfert';
+import WhitelistedServersList from './list.js';
 
 @Declare({
     name: 'wls',
@@ -11,4 +12,7 @@ import { AutoLoad, Command, Declare, IgnoreCommand, Middlewares } from 'seyfert'
 
 @AutoLoad()
 @Middlewares(['internalAccess'])
-export default class extends Command {};
+
+export default class extends Command {
+    run = new WhitelistedServersList().run;
+};
