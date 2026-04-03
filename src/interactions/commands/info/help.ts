@@ -60,6 +60,7 @@ export default class extends Command {
         const lines = { header: [] as string[], content: [] as string[], footer: [] as string[] };
 
         let prefix = 'ep';
+        let color = colors.green;
         let guildName: string | undefined;
         let username = s(context.client.me.username);
         let avatarUrl = context.client.me.avatarURL();
@@ -79,7 +80,8 @@ export default class extends Command {
             if (guild) {
                 guildName = s(guild.name);
                 const guildConfig = await getGuild(guild.id);
-                if (guildConfig?.prefix) prefix = guildConfig.prefix;
+                if (guildConfig.prefix) prefix = guildConfig.prefix;
+                if (guildConfig.defaultColor) color = guildConfig.defaultColor
             };
         };
 
@@ -93,10 +95,10 @@ export default class extends Command {
             );
 
             lines.content.push(...commands.map((command) => {
-                const lines = [getCommandInfo(command, { prefix, isSubCommand: false })];
+                const lines = [getCommandInfo(context.client, command, { prefix, isSubCommand: false })];
 
                 if (command.subCommands) lines.push(
-                    ...command.subCommands.map((cmd) => `\n  ${getCommandInfo(cmd, { prefix, isSubCommand: true })}`)
+                    ...command.subCommands.map((cmd) => `\n  ${getCommandInfo(context.client, cmd, { prefix, isSubCommand: true })}`)
                 );
 
                 lines.push('\n');
@@ -131,7 +133,7 @@ export default class extends Command {
             createTextDisplay(lines.content.join('')),
             createSeparator(),
             createTextDisplay(lines.footer.join(''))
-        ], { color: colors.green });
+        ], { color });
 
         await context.editOrReply({ flags: MessageFlags.IsComponentsV2, components: [container] });
     };
@@ -178,10 +180,10 @@ interface CommandInfoOptions {
     isSubCommand: boolean;
 }
 
-function getCommandInfo(command: CommandListItem, options: CommandInfoOptions) {
+function getCommandInfo(client: UsingClient, command: CommandListItem, options: CommandInfoOptions) {
     return [
         `${command.subCommands ? '\n' : ''}- `,
-        command.isTextOnly === true ? `**\`${options.prefix} ${command.name}\`**` : `/${command.name}`,
+        command.isTextOnly === true ? `**\`${options.prefix} ${command.name}\`**` : client.getCommand(command.name),
         command.aliases ? ` ${command.aliases.map((a) => `\`${a}\``).join('')}` : '',
         ` - ${command.description}`
     ].join('')

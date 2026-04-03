@@ -5,7 +5,8 @@ import defaultConfig from './common/defaultConfig.js';
 import { AppConfigI } from './models/AppConfig.js';
 
 export default class EPClient extends Client {
-    config: AppConfigI = defaultConfig;
+    public config: AppConfigI = defaultConfig;
+    public commandMap: string[] = [];
 
     constructor(options?: ClientOptions) {
         super(options);
@@ -15,5 +16,10 @@ export default class EPClient extends Client {
 
     public replies(key: LangKey, props?: LangProps) {
         return lang(this, key, props);
+    };
+
+    public getCommand (name: string) {
+        const command = this.commandMap.find((mention) => mention.replace('</', '').split(':').at(0) === name);
+        return command ?? `\`/${name}\``;
     };
 };

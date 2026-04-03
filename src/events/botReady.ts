@@ -2,7 +2,7 @@ import defaultConfig from '@/common/defaultConfig.js';
 import AppConfig from '@/models/AppConfig.js';
 import { createEvent, UsingClient } from "seyfert";
 import { bold, gray, red } from 'seyfert/lib/common/index.js';
-import { ActivityType, PresenceUpdateStatus } from 'seyfert/lib/types/index.js';
+import { ActivityType, APIApplicationCommandSubcommandGroupOption, APIApplicationCommandSubcommandOption, ApplicationCommandOptionType, ApplicationCommandType, PresenceUpdateStatus } from 'seyfert/lib/types/index.js';
 
 export default createEvent({
     data: { name: 'botReady', once: true },
@@ -37,6 +37,31 @@ export default createEvent({
             '\nUntil the first admin is added, any user can use this command.',
             gray('\n================================================================')
         );
+
+        const commands = await client.proxy.applications(user.id).commands.get();
+        for (const command of commands.filter(({ type }) => type === ApplicationCommandType.ChatInput)) {
+            const cachedCommand = client.commands.values.find(({ name }) => command.name === name);
+            if (!cachedCommand) continue;
+
+            const subCommands = (command.options?.filter(({ type }) => {
+                return [1, 2].includes(type);
+            }) ?? []) as (APIApplicationCommandSubcommandOption | APIApplicationCommandSubcommandGroupOption)[];
+
+            if (subCommands.length < 1) {
+                client.commandMap.push(`</${command.name}:${command.id}>`);
+                continue;
+            };
+
+            for (const subCommand of subCommands) {
+                const filteredOptions = (subCommand.options ?? []).filter(({ type }) => {
+                    return type === ApplicationCommandOptionType.Subcommand;
+                });
+
+                if (filteredOptions.length > 0) for (const subSubCommand of filteredOptions) {
+                    client.commandMap.push(`</${command.name} ${subCommand.name} ${subSubCommand.name}:${command.id}>`);
+                } else client.commandMap.push(`</${command.name} ${subCommand.name}:${command.id}>`);
+            };
+        };
     }
 });
 

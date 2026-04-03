@@ -17,6 +17,8 @@ declare module 'seyfert' {
 
     interface UsingClient extends ParseClient<Client<true>> {
         config: AppConfigI;
+        commandMap: string[];
+        getCommand: (name: string) => string;
         replies: (key: LangKey, props?: LangProps) => string;
     }
 
