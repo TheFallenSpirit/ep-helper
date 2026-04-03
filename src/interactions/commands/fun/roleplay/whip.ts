@@ -44,8 +44,15 @@ export default class extends Command {
             content: `${target} isn't a member of this server.`
         });
 
-        const targetProfile = await getProfile(context.guildId!, target.id);
-        if (targetProfile?.rpEnabled !== true) return context.editOrReply({
+        const targetProfile = await getProfile(
+            context.guildId!,
+            target.id
+        );
+
+        if (
+            targetProfile?.rpEnabled !== true &&
+            !context.client.config.internalAdminIds.includes(context.author.id)
+        ) return context.editOrReply({
             allowed_mentions: { parse: [] },
             content: `${target} hasn't opted-in to RP commands. They can use /opt in to opt-in.`
         });
