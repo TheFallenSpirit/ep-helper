@@ -6,9 +6,9 @@ import { ChannelType, MessageFlags, OverwriteType } from 'seyfert/lib/types/inde
 const options = {
     time: createNumberOption({
         required: true,
-        description: 'The amount of time to pair each couple for (in minutes, min: 2, max: 15).',
-        min_value: 2,
-        max_value: 15
+        description: 'The amount of time to pair each couple for (in minutes, min: 1, max: 15).',
+        min_value: 1,
+        max_value: 30
     }),
     'group-size': createNumberOption({
         required: true,
