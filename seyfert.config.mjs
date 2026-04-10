@@ -12,7 +12,6 @@ export default config.bot({
         'Guilds',
         'GuildMembers',
         'GuildMessages',
-        'GuildPresences',
         'MessageContent'
     ]
 });

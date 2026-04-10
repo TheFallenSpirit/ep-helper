@@ -7,6 +7,7 @@ import { AppConfigI } from './models/AppConfig.js';
 export default class EPClient extends Client {
     public config: AppConfigI = defaultConfig;
     public commandMap: string[] = [];
+    public cachedGuildList = new Map<string, boolean>();
 
     constructor(options?: ClientOptions) {
         super(options);

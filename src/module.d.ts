@@ -19,6 +19,7 @@ declare module 'seyfert' {
         config: AppConfigI;
         commandMap: string[];
         getCommand: (name: string) => string;
+        cachedGuildList: Map<string, boolean>;
         replies: (key: LangKey, props?: LangProps) => string;
     }
 
